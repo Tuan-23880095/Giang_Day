@@ -199,48 +199,20 @@
         this.innerHTML = `
           <nav class="bg-white border-b border-gray-200 sticky top-0 z-10">
             <div class="container mx-auto px-4">
-              <div id="nav-tabs" class="flex flex-wrap gap-2 py-2">
-                <!-- Tổng quan -->
-                <a href="#/" 
-                   class="px-4 py-3 font-semibold border-b-4 transition-all duration-300 tab-button"
-                   data-match="^#/$">Tổng quan</a>
-    
-                <!-- Quiz: khớp mọi route bắt đầu bằng #/quiz/ -->
-                <a href="#/quiz/sequences-01" 
-                   class="px-4 py-3 font-semibold border-b-4 transition-all duration-300 tab-button"
-                   data-match="^#/quiz/">
-                   Phần 1–3 (Đề: sequences-01)
-                </a>
-    
-                <!-- Grade: khớp mọi route bắt đầu bằng #/grade/ (ví dụ #/grade/6) -->
-                <a href="#/grade/6" 
-                   class="px-4 py-3 font-semibold border-b-4 transition-all duration-300 tab-button"
-                   data-match="^#/grade/">
-                   Khối 6
-                </a>
+              <div id="nav-tabs" class="flex space-x-4 py-2">
+                <a href="#/" class="px-4 py-3 font-semibold text-gray-600 border-b-4 border-transparent transition-all duration-300 tab-button active">Tổng quan</a>
+                <a href="#/quiz/sequences-01" class="px-4 py-3 font-semibold text-gray-600 border-b-4 border-transparent transition-all duration-300 tab-button">Phần 1–3 (Đề: sequences-01)</a>
               </div>
             </div>
           </nav>`;
-    
-        const tabs = this.querySelectorAll<HTMLAnchorElement>('.tab-button');
-    
+        const tabs = this.querySelectorAll('.tab-button');
         const setActive = () => {
-          const h = location.hash || '#/';
-          tabs.forEach(a => {
-            // reset style
-            a.classList.remove('text-blue-700','border-blue-600','active');
-            a.classList.add('text-gray-600','border-transparent');
-            // kích hoạt nếu regex trong data-match khớp hash hiện tại
-            const rx = a.getAttribute('data-match');
-            if (rx && new RegExp(rx).test(h)) {
-              a.classList.add('text-blue-700','border-blue-600','active');
-              a.classList.remove('text-gray-600','border-transparent');
-            }
-          });
+          tabs.forEach(t=>{ t.classList.remove('active','text-blue-700','border-blue-600'); t.classList.add('text-gray-600','border-transparent'); });
+          const current = [...tabs].find(a => a.getAttribute('href') === (location.hash||'#/'));
+          if(current){ current.classList.add('active','text-blue-700','border-blue-600'); current.classList.remove('text-gray-600','border-transparent'); }
         };
-    
-        window.addEventListener('hashchange', setActive);
-        setActive(); // chạy lần đầu
+        addEventListener('hashchange', setActive);
+        setActive();
       }
     });
  
