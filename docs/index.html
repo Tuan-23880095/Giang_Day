@@ -6,29 +6,17 @@
   <title>Trang chủ - Tài nguyên học tập</title>
   <!-- Tailwind via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts -->
+  <!-- Google Fonts: dùng <link> an toàn hơn @import trong <style> -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <!-- Font Awesome (icons) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <!-- CSS thuần của bạn (không dùng @apply) -->
+  <!-- (Tùy chọn) stylesheet riêng; KHÔNG dùng @apply vì không build -->
   <link rel="stylesheet" href="./assets/css/styles.css" />
   <meta name="description" content="Ứng dụng ôn tập toán tĩnh, hỗ trợ nhiều đề, chấm điểm offline-first." />
-  <style>
-    body{font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif}
-    /* Thanh điểm cố định đáy màn hình */
-    .score-bar{position:fixed;left:0;bottom:0;width:100%;}
-    /* Card thống nhất khi không build Tailwind */
-    .content-card{background:#fff;border:1px solid #eef1f6;border-radius:0.75rem;padding:1.5rem;box-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -2px rgba(0,0,0,.05);transition:transform .2s, box-shadow .2s}
-    .content-card:hover{transform:translateY(-2px);box-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 10px 10px -5px rgba(0,0,0,.04)}
-    .solution-toggle{display:inline-block;padding:.5rem 1rem;background:#1d4ed8;color:#fff;border-radius:.5rem}
-    .solution-content{background:#f8fafc;border:1px solid #e5e7eb;border-radius:.5rem;padding:1rem}
-    /* Đệm dưới để không che nội dung bởi score-bar */
-    main{padding-bottom:4.5rem}
-  </style>
 </head>
-<body class="antialiased bg-[#f8f7f4] text-gray-800">
+<body class="antialiased bg-[#f8f7f4] text-gray-800" style="font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
 
-  <!-- Header -->
+  <!-- Header giữ style tương tự trang cũ -->
   <header class="bg-white shadow-md">
     <div class="container mx-auto px-4 py-5">
       <h1 class="text-3xl font-bold text-blue-800">Trang chủ: Tài nguyên học tập</h1>
@@ -38,9 +26,10 @@
 
   <nav-tabs></nav-tabs>
 
-  <!-- Container để router bơm nội dung -->
+  <!-- CHỈ một <main>; nội dung động sẽ được router render vào đây -->
   <main id="view" class="container mx-auto p-4 md:p-8"></main>
 
+  <!-- Footer luôn ở ngoài <main> để không bị router ghi đè -->
   <contact-footer></contact-footer>
 
   <!-- Runtime 1 file, không cần build -->
@@ -68,43 +57,15 @@
       }
     };
 
-    // ======================= UTILS =============================
-    /** Parser Markdown siêu gọn dùng cho prompt: #, **bold** và xuống dòng */
-    function md2html(s=''){
-      return String(s)
-        .replace(/^# (.*)$/gm,'<h1 class="text-2xl font-bold mb-2'>$1</h1>')
-        .replace(/\*\*(.*?)\*\*/g,'<b>$1</b>')
-        .replace(/\n/g,'<br/>');
-    }
-
-    // Tải JSON đề từ thư mục /docs/content/... (dùng đường dẫn TƯƠNG ĐỐI)
-    async function loadQuizJson(id){
-      const url = `./content/quizzes/${id}.json`;
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(`Không tải được ${url}`);
-      return res.json();
-    }
-
-    function showScore(score, total){
-      let bar = document.querySelector('div[data-scorebar]');
-      if(!bar){
-        bar = document.createElement('div');
-        bar.setAttribute('data-scorebar','');
-        bar.className = 'score-bar bg-blue-800 text-white p-4 text-xl font-bold text-center';
-        document.body.appendChild(bar);
-      }
-      bar.textContent = `Điểm số: ${score} / ${total}`;
-    }
-
-    // ======================= BASE COMPONENT =====================
+    // ======================= BASE COMPONENT =======================
     class BaseComponent extends HTMLElement {
       setState(p){ this.state = { ...(this.state||{}), ...p }; this.render?.(); }
     }
 
-    // ======================= REPOSITORY (mock) ==================
+    // ======================= REPOSITORY (mock) ===================
     class ContentRepository { getItemsByCategoryId(id){ return Promise.resolve(MOCK_DATA.categories[id]||[]); } }
 
-    // ======================= ITEM CARD ==========================
+    // ======================= ITEM CARD ===========================
     class ContentItemCard extends BaseComponent {
       connectedCallback(){ this.render(); }
       render(){
@@ -113,7 +74,7 @@
         const i = this.getAttribute('data-icon')||'fas fa-circle';
         const u = this.getAttribute('data-url')||'#';
         this.innerHTML = `
-          <a href="${u}" class="content-card block h-full">
+          <a href="${u}" class="block h-full bg-white p-6 rounded-xl shadow-lg border border-gray-100 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
             <div class="flex items-start space-x-4">
               <div class="text-3xl text-blue-600 w-10 text-center"><i class="${i}"></i></div>
               <div>
@@ -126,7 +87,7 @@
     }
     customElements.define('content-item-card', ContentItemCard);
 
-    // ======================= CATEGORY BLOCK =====================
+    // ======================= CATEGORY BLOCK ======================
     class ContentCategory extends BaseComponent {
       constructor(){ super(); this.repo = new ContentRepository(); this.state={loading:true,items:[]}; }
       async connectedCallback(){
@@ -141,9 +102,11 @@
         const body = this.state?.loading
           ? '<div class="text-gray-500 italic">Đang tải dữ liệu...</div>'
           : `
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">${(this.state.items||[]).map(it=>`
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              ${(this.state.items||[]).map(it=>`
                 <content-item-card data-title="${it.title}" data-description="${it.description}" data-icon="${it.icon}" data-url="${it.url}"></content-item-card>
-            `).join('')}</div>`;
+              `).join('')}
+            </div>`;
         this.innerHTML = `
           <section class="mb-12">
             <h2 class="text-2xl font-bold text-blue-800 mb-6 border-b-2 border-blue-200 pb-2">
@@ -155,7 +118,7 @@
     }
     customElements.define('content-category', ContentCategory);
 
-    // ======================= INFO & FOOTER =======================
+    // ======================= INFO & FOOTER ========================
     customElements.define('my-info-card', class extends HTMLElement{
       connectedCallback(){ this.innerHTML = `
         <div class="bg-gradient-to-r from-blue-700 to-blue-900 text-white p-8 rounded-xl shadow-2xl flex items-center">
@@ -192,8 +155,7 @@
         </footer>`; }
     });
 
-        <!-- ======================= NAV TABS (REPLACE) ============================ -->
-  
+    // ======================= NAV TABS =============================
     customElements.define('nav-tabs', class extends HTMLElement{
       connectedCallback(){
         this.innerHTML = `
@@ -207,134 +169,83 @@
           </nav>`;
         const tabs = this.querySelectorAll('.tab-button');
         const setActive = () => {
-          tabs.forEach(t=>{ t.classList.remove('active','text-blue-700','border-blue-600'); t.classList.add('text-gray-600','border-transparent'); });
+          tabs.forEach(t=>{
+            t.classList.remove('active','text-blue-700','border-blue-600');
+            t.classList.add('text-gray-600','border-transparent');
+          });
           const current = [...tabs].find(a => a.getAttribute('href') === (location.hash||'#/'));
-          if(current){ current.classList.add('active','text-blue-700','border-blue-600'); current.classList.remove('text-gray-600','border-transparent'); }
+          if(current){
+            current.classList.add('active','text-blue-700','border-blue-600');
+            current.classList.remove('text-gray-600','border-transparent');
+          }
         };
         addEventListener('hashchange', setActive);
         setActive();
       }
     });
- 
-    // ======================= ROUTER & PAGES ======================
+
+    // ======================= ROUTER ===============================
     const elView = document.getElementById('view');
 
     function showHome(){
+      if(!elView) return;
       elView.innerHTML = `
         <my-info-card class="mb-10"></my-info-card>
         <content-category data-category-id="grades"  data-title="Các khối lớp"             data-icon-class="fas fa-graduation-cap"></content-category>
         <content-category data-category-id="math"    data-title="Chủ đề Toán học"          data-icon-class="fas fa-calculator"></content-category>
-        <content-category data-category-id="science" data-title="Chủ đề Khoa học Tự nhiên" data-icon-class="fas fa-flask"></content-category>
-        <content-category data-category-id="other"   data-title="Hoạt động khác"           data-icon-class="fas fa-palette"></content-category>`;
+        <content-category data-category-id="science" data-title="Chủ đề Khoa học Tự nhiên"  data-icon-class="fas fa-flask"></content-category>
+        <content-category data-category-id="other"   data-title="Hoạt động khác"           data-icon-class="fas fa-palette"></content-category>
+      `;
     }
 
-    function showGrade(grade){
+// Ví dụ minh hoạ cách mở rộng hàm showGrade() cho route #/grade/:id
+// Hàm này có thể thay vào file index-fixed.html hiện tại
+  
+  function showGrade(grade) {
+    elView.innerHTML = `
+      <section class="mb-8">
+        <h2 class="section-title text-2xl font-bold mb-2">
+          <i class="fas fa-school mr-3 text-blue-700"></i>
+          Tài nguyên cho khối ${grade}
+        </h2>
+        <p class="text-gray-600 mb-4">(Bạn có thể liệt kê các chủ đề hoặc đề minh hoạ cho khối này.)</p>
+  
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <a href="#/quiz/sequences-01" class="block bg-white p-6 rounded-xl shadow hover:shadow-xl transition">
+            <div class="flex items-center gap-3">
+              <i class="fas fa-file-alt text-2xl text-blue-700"></i>
+              <div>
+                <h3 class="text-xl font-semibold text-gray-800">Đề minh hoạ: Dãy số & Cấp số</h3>
+                <p class="text-gray-600">Ôn tập dãy số, cấp số cộng, cấp số nhân.</p>
+              </div>
+            </div>
+          </a>
+  
+          <a href="#/subject/geometry" class="block bg-white p-6 rounded-xl shadow hover:shadow-xl transition">
+            <div class="flex items-center gap-3">
+              <i class="fas fa-drafting-compass text-2xl text-blue-700"></i>
+              <div>
+                <h3 class="text-xl font-semibold text-gray-800">Chủ đề: Hình học không gian</h3>
+                <p class="text-gray-600">Ôn tập khối chóp, lăng trụ, góc giữa đường và mặt.</p>
+              </div>
+            </div>
+          </a>
+        </div>
+  
+        <p class="mt-6"><a href="#/" class="text-blue-700 underline">← Quay lại trang chủ</a></p>
+      </section>`;
+  }
+
+
+    function showQuiz(id){
+      if(!elView) return;
       elView.innerHTML = `
-        <section class="mb-8">
-          <h2 class="text-2xl font-bold text-blue-800 mb-2"><i class="fas fa-school mr-3 text-blue-700"></i>Tài nguyên cho khối ${grade}</h2>
-          <p class="text-gray-600 mb-4">(Bạn có thể liệt kê các mục dành riêng cho khối ${grade} ở đây.)</p>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <a href="#/quiz/sequences-01" class="content-card block">Đề minh họa: Dãy số & Cấp số</a>
-          </div>
-          <p class="mt-6"><a href="#/" class="text-blue-700 underline">← Quay lại trang chủ</a></p>
-        </section>`;
-    }
-
-    async function showQuiz(id){
-      const h = document.createElement('h2');
-      h.className = 'text-2xl font-bold mb-4';
-      h.innerHTML = `Đề luyện tập: <code>${id}</code>`;
-
-      const wrap = document.createElement('div');
-      wrap.className = 'space-y-4';
-
-      // Helper render 1 câu hỏi
-      function renderBlock(b){
-        const card = document.createElement('div');
-        card.className = 'content-card question-card';
-
-        if (b.kind==='choice'){
-          card.innerHTML = `
-            <div class="font-medium text-lg">${md2html(b.q.prompt)}</div>
-            <ul class="list-none space-y-2 mt-4">${b.q.choices.map((c,i)=>`
-                <li><label class="flex gap-3 items-start">
-                  <input name="${b.q.id}" type="radio" value="${i}" class="mt-1" />
-                  <span class="text-gray-700">${c}</span>
-                </label></li>`).join('')}
-            </ul>`;
-          card.dataset.answer = String(b.q.answerIndex);
-        }
-
-        if (b.kind==='tf'){
-          card.innerHTML = `
-            <div class="font-medium text-lg">${md2html(b.q.prompt)}</div>
-            <div class="mt-3 flex gap-6">
-              <label class="flex items-center gap-2"><input type="radio" name="${b.q.id}" value="true"> Đúng</label>
-              <label class="flex items-center gap-2"><input type="radio" name="${b.q.id}" value="false"> Sai</label>
-            </div>`;
-          card.dataset.answer = String(b.q.answer);
-        }
-
-        if (b.kind==='sa'){
-          card.innerHTML = `
-            <div class="font-medium text-lg">${md2html(b.q.prompt)}</div>
-            <input type="text" class="mt-3 w-full border rounded px-3 py-2" placeholder="Nhập đáp án" />`;
-          card.dataset.accepted = JSON.stringify(b.q.acceptedAnswers||[]);
-        }
-
-        if (b.q.solutionHtml){
-          const sol = document.createElement('details');
-          sol.className = 'solution-content mt-4';
-          sol.innerHTML = `<summary class="solution-toggle cursor-pointer inline-block">Xem gợi ý/giải</summary>${b.q.solutionHtml}`;
-          card.appendChild(sol);
-        }
-        wrap.appendChild(card);
-      }
-
-      // Nạp JSON thật
-      try{
-        const j = await loadQuizJson(id);
-        const blocks = [
-          ...(j.parts.part1||[]).map(q=>({kind:'choice', q})),
-          ...(j.parts.part2||[]).map(q=>({kind:'tf', q})),
-          ...(j.parts.part3||[]).map(q=>({kind:'sa', q})),
-        ];
-        blocks.forEach(renderBlock);
-      }catch(err){
-        wrap.innerHTML = `<div class="text-red-600">${err.message}</div>`;
-      }
-
-      // Nút chấm điểm
-      const controls = document.createElement('div');
-      controls.className = 'mt-4 flex gap-3';
-      controls.innerHTML = `
-        <button id="btn-check" class="solution-toggle">Kiểm tra</button>
-        <button id="btn-reset" class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300">Đặt lại</button>`;
-
-      elView.innerHTML = '';
-      elView.append(h, wrap, controls);
-
-      document.getElementById('btn-check').onclick = () => {
-        let score = 0, total = 0;
-        wrap.querySelectorAll('.question-card').forEach((card)=>{
-          const ans = card.dataset.answer;
-          const acc = card.dataset.accepted ? JSON.parse(card.dataset.accepted) : null;
-          total++;
-          if (ans!==undefined){
-            // MCQ/TF
-            const name = card.querySelector('input')?.getAttribute('name');
-            const chosen = wrap.querySelector(`input[name='${name}']:checked`);
-            if (chosen && String(chosen.value) === String(ans)) score++;
-          } else if (acc){
-            // SA
-            const input = card.querySelector('input');
-            const val = (input?.value||'').trim().replace(/\s+/g,'').toLowerCase();
-            if (acc.some(a=>String(a).replace(/\s+/g,'').toLowerCase()===val)) score++;
-          }
-        });
-        showScore(score, total);
-      };
-      document.getElementById('btn-reset').onclick = ()=> location.reload();
+        <section class="bg-white p-6 rounded-xl shadow border">
+          <h2 class="text-2xl font-bold mb-2">Đề luyện tập: ${id}</h2>
+          <p class="text-gray-600">Trang làm bài cho đề <code>${id}</code> sẽ hiển thị ở đây. (Placeholder demo)</p>
+          <p class="mt-4"><a href="#/" class="text-blue-700 underline">← Quay lại trang chủ</a></p>
+        </section>
+      `;
     }
 
     function route(){
@@ -351,7 +262,9 @@
     }
 
     window.addEventListener('hashchange', route);
+    // chạy lần đầu
     route();
   </script>
+
 </body>
 </html>
