@@ -1,4 +1,4 @@
-import { ContentRepository } from '../data/ContentRepository';
+import { ContentRepository } from '../data./contentRepository';
 import { ChoiceQuestion } from '../models/ChoiceQuestion';
 import { TrueFalseQuestion } from '../models/TrueFalseQuestion';
 import { ShortAnswerQuestion } from '../models/ShortAnswerQuestion';
