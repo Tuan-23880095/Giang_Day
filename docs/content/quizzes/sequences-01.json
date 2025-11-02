@@ -1,0 +1,42 @@
+{
+  "id": "sequences-01",
+  "title": "Ôn tập Dãy số, Cấp số cộng & Cấp số nhân",
+  "parts": {
+    "part1": [
+      {
+        "type": "choice",
+        "id": "p1q1",
+        "prompt": "**Câu 1:** Khẳng định nào sau đây là **sai**?",
+        "choices": [
+          "Một dãy số tăng thì bị chặn dưới.",
+          "Một dãy số giảm thì bị chặn trên.",
+          "Một dãy số bị chặn thì phải tăng hoặc giảm.",
+          "Một dãy số không đổi thì bị chặn."
+        ],
+        "answerIndex": 2,
+        "solutionHtml": "<p class=\"font-semibold text-lg\">Chọn C</p><p>Dãy bị chặn có thể không đơn điệu. Ví dụ: $u_n=(-1)^n$.</p>",
+        "points": 1
+      }
+    ],
+    "part2": [
+      {
+        "type": "tf",
+        "id": "p2q1",
+        "prompt": "**Câu 1:** Dãy $u_n=1/n$ là dãy giảm.",
+        "answer": true,
+        "solutionHtml": "<p>Vì $u_{n+1}-u_n=\\frac{-1}{n(n+1)}<0$.</p>",
+        "points": 1
+      }
+    ],
+    "part3": [
+      {
+        "type": "sa",
+        "id": "p3q1",
+        "prompt": "**Câu 1:** Cho $u_n=2n-1$. Tính $S_{100}$.",
+        "acceptedAnswers": ["10000", "10\u00a0000"],
+        "solutionHtml": "<p>$S_{100}=\\frac{100}{2}(1+199)=10000$.</p>",
+        "points": 1
+      }
+    ]
+  }
+}
