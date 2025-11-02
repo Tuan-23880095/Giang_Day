@@ -10,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <!-- Font Awesome (icons) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <!-- (Tùy chọn) stylesheet riêng của bạn nếu có rule thuần CSS, KHÔNG dùng @apply vì không build -->
+  <!-- (Tùy chọn) stylesheet riêng; KHÔNG dùng @apply vì không build -->
   <link rel="stylesheet" href="./assets/css/styles.css" />
   <meta name="description" content="Ứng dụng ôn tập toán tĩnh, hỗ trợ nhiều đề, chấm điểm offline-first." />
 </head>
@@ -25,73 +25,15 @@
   </header>
 
   <nav-tabs></nav-tabs>
-  
+
+  <!-- CHỈ một <main>; nội dung động sẽ được router render vào đây -->
   <main id="view" class="container mx-auto p-4 md:p-8"></main>
-    <my-info-card class="mb-10"></my-info-card>
-    <content-category data-category-id="grades" data-title="Các khối lớp" data-icon-class="fas fa-graduation-cap"><./content-category>
-    <content-category data-category-id="math" data-title="Chủ đề Toán học" data-icon-class="fas fa-calculator"><./content-category>
-    <content-category data-category-id="science" data-title="Chủ đề Khoa học Tự nhiên" data-icon-class="fas fa-flask"><./content-category>
-    <content-category data-category-id="other" data-title="Hoạt động khác" data-icon-class="fas fa-palette"><./content-category>
-      
-  </main>
-  <script> 
-      // =====================
-       // Router hash tối giản
-    // =====================
-    const elView = document.getElementById('view');
-    
-    function showHome(){
-      elView.innerHTML = `
-        <my-info-card class="mb-10"></my-info-card>
-        <content-category data-category-id="grades"  data-title="Các khối lớp"           data-icon-class="fas fa-graduation-cap"></content-category>
-        <content-category data-category-id="math"    data-title="Chủ đề Toán học"        data-icon-class="fas fa-calculator"></content-category>
-        <content-category data-category-id="science" data-title="Chủ đề Khoa học Tự nhiên" data-icon-class="fas fa-flask"></content-category>
-        <content-category data-category-id="other"   data-title="Hoạt động khác"         data-icon-class="fas fa-palette"></content-category>
-      `;
-    }
-    
-    function showGrade(grade){
-      elView.innerHTML = `
-        <section class="bg-white p-6 rounded-xl shadow border">
-          <h2 class="text-2xl font-bold mb-2">Khối ${grade}</h2>
-          <p class="text-gray-600">Trang nội dung khối ${grade} (đang chuẩn bị). Bạn có thể thêm card/bài tại đây.</p>
-          <p class="mt-4"><a href="#/" class="text-blue-700 underline">← Quay lại trang chủ</a></p>
-        </section>
-      `;
-    }
-    
-    function showQuiz(id){
-      elView.innerHTML = `
-        <section class="bg-white p-6 rounded-xl shadow border">
-          <h2 class="text-2xl font-bold mb-2">Đề luyện tập: ${id}</h2>
-          <p class="text-gray-600">Trang làm bài cho đề <code>${id}</code> sẽ hiển thị ở đây. (Placeholder demo)</p>
-          <p class="mt-4"><a href="#/" class="text-blue-700 underline">← Quay lại trang chủ</a></p>
-        </section>
-      `;
-    }
-    
-    function route(){
-      const h = location.hash || '#/'
-      if (h.startsWith('#/quiz/')) {
-        const id = h.replace('#/quiz/','').trim();
-        return showQuiz(id);
-      }
-      if (h.startsWith('#/grade/')) {
-        const g = h.replace('#/grade/','').trim();
-        return showGrade(g);
-      }
-      return showHome();
-    }
-    
-    window.addEventListener('hashchange', route);
-    // chạy lần đầu
-    route();
-  </script>
+
+  <!-- Footer luôn ở ngoài <main> để không bị router ghi đè -->
   <contact-footer></contact-footer>
 
   <!-- Runtime 1 file, không cần build -->
   <script type="module">
-      
     // ======================= DATA (mock) =======================
     const MOCK_DATA = {
       categories: {
@@ -162,7 +104,7 @@
           : `
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               ${(this.state.items||[]).map(it=>`
-                <content-item-card data-title="${it.title}" data-description="${it.description}" data-icon="${it.icon}" data-url="${it.url}"><./content-item-card>
+                <content-item-card data-title="${it.title}" data-description="${it.description}" data-icon="${it.icon}" data-url="${it.url}"></content-item-card>
               `).join('')}
             </div>`;
         this.innerHTML = `
@@ -241,9 +183,60 @@
         setActive();
       }
     });
- 
+
+    // ======================= ROUTER ===============================
+    const elView = document.getElementById('view');
+
+    function showHome(){
+      if(!elView) return;
+      elView.innerHTML = `
+        <my-info-card class="mb-10"></my-info-card>
+        <content-category data-category-id="grades"  data-title="Các khối lớp"             data-icon-class="fas fa-graduation-cap"></content-category>
+        <content-category data-category-id="math"    data-title="Chủ đề Toán học"          data-icon-class="fas fa-calculator"></content-category>
+        <content-category data-category-id="science" data-title="Chủ đề Khoa học Tự nhiên"  data-icon-class="fas fa-flask"></content-category>
+        <content-category data-category-id="other"   data-title="Hoạt động khác"           data-icon-class="fas fa-palette"></content-category>
+      `;
+    }
+
+    function showGrade(grade){
+      if(!elView) return;
+      elView.innerHTML = `
+        <section class="bg-white p-6 rounded-xl shadow border">
+          <h2 class="text-2xl font-bold mb-2">Khối ${grade}</h2>
+          <p class="text-gray-600">Trang nội dung khối ${grade} (đang chuẩn bị). Bạn có thể thêm card/bài tại đây.</p>
+          <p class="mt-4"><a href="#/" class="text-blue-700 underline">← Quay lại trang chủ</a></p>
+        </section>
+      `;
+    }
+
+    function showQuiz(id){
+      if(!elView) return;
+      elView.innerHTML = `
+        <section class="bg-white p-6 rounded-xl shadow border">
+          <h2 class="text-2xl font-bold mb-2">Đề luyện tập: ${id}</h2>
+          <p class="text-gray-600">Trang làm bài cho đề <code>${id}</code> sẽ hiển thị ở đây. (Placeholder demo)</p>
+          <p class="mt-4"><a href="#/" class="text-blue-700 underline">← Quay lại trang chủ</a></p>
+        </section>
+      `;
+    }
+
+    function route(){
+      const h = location.hash || '#/'
+      if (h.startsWith('#/quiz/')) {
+        const id = h.replace('#/quiz/','').trim();
+        return showQuiz(id);
+      }
+      if (h.startsWith('#/grade/')) {
+        const g = h.replace('#/grade/','').trim();
+        return showGrade(g);
+      }
+      return showHome();
+    }
+
+    window.addEventListener('hashchange', route);
+    // chạy lần đầu
+    route();
   </script>
 
 </body>
 </html>
-        
