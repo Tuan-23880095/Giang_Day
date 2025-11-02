@@ -1,0 +1,237 @@
+{
+  "id": "de-cuoi-chuong-III",
+  "title": "Đề ❶: Cuối chương III",
+  "totalPoints": 34,
+  "parts": {
+    "part1": [
+      {
+        "id": "p1q1",
+        "question": "**Câu 1:** Khẳng định nào sau đây là **sai**?",
+        "options": [
+          "Một dãy số tăng thì bị chặn dưới.",
+          "Một dãy số giảm thì bị chặn trên.",
+          "Một dãy số bị chặn thì phải tăng hoặc giảm.",
+          "Một dãy số không đổi thì bị chặn."
+        ],
+        "correctAnswer": "D",
+        "solution": "<p class=\"font-semibold text-lg\">Chọn D</p><p>Ghi chú: Lời giải trong file docx ghi 'Chọn D', khác với file HTML mẫu ban đầu. File JSON này tuân theo file docx.</p>"
+      },
+      {
+        "id": "p1q2",
+        "question": "**Câu 2:** Cho dãy số $u_n$ (số hạng sau bằng một nửa số hạng liền trước nó). Công thức tồng quát của dãy số đã cho là:",
+        "options": [
+          "$u_n = \\frac{1}{2^n}$",
+          "$u_n = \\frac{1}{2^{n+1}}$",
+          "$u_n = \\frac{1}{2^{n-2}}$",
+          "$u_n = \\frac{1}{2^{n-1}}$"
+        ],
+        "correctAnswer": "D",
+        "solution": "<p class=\"font-semibold text-lg\">Chọn D</p><p>Đây là cấp số nhân với công bội $q = 1/2$. Nếu $u_1 = 1$, ta có $u_n = u_1 \cdot q^{n-1} = (1/2)^{n-1} = 1/2^{n-1}$.</p>"
+      },
+      {
+        "id": "p1q3",
+        "question": "**Câu 3:** Cho dãy số $(u_n)$ với $u_n = 3n - 1$. Khẳng định nào sau đây là đúng?",
+        "options": [
+          "Dãy số $(u_n)$ là cấp số cộng với công sai $d = 3$.",
+          "Dãy số $(u_n)$ là cấp số cộng với công sai $d = 2$.",
+          "Dãy số $(u_n)$ là cấp số nhân với công bội $q = 3$.",
+          "Dãy số $(u_n)$ là cấp số nhân với cộng bội $q = 2$."
+        ],
+        "correctAnswer": "A",
+        "solution": "<p class=\"font-semibold text-lg\">Chọn A</p><p>$u_{n+1} - u_n = (3(n+1) - 1) - (3n - 1) = (3n + 2) - (3n - 1) = 3$.</p><p>Vì hiệu là hằng số, đây là CSC với $d = 3$.</p>"
+      },
+      {
+        "id": "p1q4",
+        "question": "**Câu 4:** Trong các dãy số cho bởi công thức truy hồi sau, dãy số nào là cấp số nhân?",
+        "options": [
+          "$u_1 = 2, u_{n+1} = u_n + 3$",
+          "$u_1 = 2, u_{n+1} = 2u_n$",
+          "$u_1 = 2, u_{n+1} = u_n^2$",
+          "$u_1 = 2, u_{n+1} = u_n - 1$"
+        ],
+        "correctAnswer": "B",
+        "solution": "<p class=\"font-semibold text-lg\">Chọn B</p><p>Cấp số nhân có dạng $u_{n+1} = u_n \cdot q$.</p>"
+      },
+      {
+        "id": "p1q5",
+        "question": "**Câu 5:** Tổng 100 số hạng đầu của dãy số $(u_n)$ với $u_n = 2n - 1$ là",
+        "options": [
+          "199.",
+          "$\\frac{100(2 + 199)}{2}$.",
+          "10000.",
+          "9999."
+        ],
+        "correctAnswer": "C",
+        "solution": "<p class=\"font-semibold text-lg\">Chọn C</p><p>Đây là CSC với $u_1 = 1$ và $d = 2$.</p><p>$S_{100} = \\frac{100}{2} [2u_1 + (100-1)d] = 50 [2(1) + 99(2)] = 50 [2 + 198] = 50 \cdot 200 = 10000$.</p>"
+      },
+      {
+        "id": "p1q6",
+        "question": "**Câu 6:** Khẳng định nào sau đây là **sai**?",
+        "options": [
+          "Dãy số có $u_n = \\frac{1}{n}$.",
+          "Hiệu số $u_{n+1} - u_n < 0, \\forall n \\in \\mathbb{N}^*$.",
+          "Với $u_n = 2n$ thì dãy số tăng.",
+          "Với $u_n = \\frac{1}{n}$ thì dãy số giảm."
+        ],
+        "correctAnswer": "B",
+        "solution": "<p class=\"font-semibold text-lg\">Chọn B</p><p>Lời giải trong docx: $u_{n+1} - u_n = \\frac{-1}{n(n+1)} < 0$. Khẳng định B là đúng nếu xét cho $u_n = 1/n$. Có thể câu hỏi/lời giải gốc có nhầm lẫn. Chọn theo file docx.</p>"
+      },
+      {
+        "id": "p1q7",
+        "question": "**Câu 7:** Cho dãy số $(u_n)$ với $u_n = \\frac{n-1}{n+1}$. Dãy số $(u_n)$ là dãy số",
+        "options": [
+          "Bị chặn trên bởi 1.",
+          "Giảm.",
+          "Bị chặn dưới bởi 2.",
+          "Tăng."
+        ],
+        "correctAnswer": "D",
+        "solution": "<p class=\"font-semibold text-lg\">Chọn D</p><p>$u_{n+1} - u_n = \\frac{n}{n+2} - \\frac{n-1}{n+1} = \\frac{n(n+1) - n(n+2) + (n+2)}{(n+2)(n+1)} = \\frac{2}{(n+2)(n+1)} > 0$. Dãy số tăng.</p>"
+      },
+      {
+        "id": "p1q8",
+        "question": "**Câu 8:** Cho cấp số cộng $(u_n)$ có $u_1 = -5$ và công sai $d = 3$. Hỏi kể từ số hạng thứ mấy trở đi thì các số hạng của $(u_n)$ đều lớn hơn $100$?",
+        "options": [
+          "$n \\ge 35$.",
+          "$n \\ge 36$.",
+          "$n \\ge 37$.",
+          "$n \\ge 34$."
+        ],
+        "correctAnswer": "B",
+        "solution": "<p class=\"font-semibold text-lg\">Chọn B</p><p>$u_n = u_1 + (n-1)d = -5 + (n-1)3 = 3n - 8$.</p><p>$u_n > 100 \Rightarrow 3n - 8 > 100 \Rightarrow 3n > 108 \Rightarrow n > 36$.</p><p>Ghi chú: Lời giải docx chọn B (n>=36). Tuy nhiên, $n>36$ có nghĩa là $n \ge 37$. $u_{36} = 3(36)-8 = 100$. $u_{37} = 103$. Câu hỏi là 'lớn hơn 100', vậy $n \ge 37$ (Đáp án C) mới đúng. Ta tuân theo lời giải docx 'Chọn B'.</p>"
+      },
+      {
+        "id": "p1q9",
+        "question": "**Câu 9:** Xác định số hàng đầu $u_1$ và công sai $d$ của cấp số cộng $(u_n)$ có $u_9 = 5u_2$ và $u_{13} = 2u_6 + 5$.",
+        "options": [
+          "$u_1 = 3$ và $d = 4$.",
+          "$u_1 = 3$ và $d = 5$.",
+          "$u_1 = 4$ và $d = 3$.",
+          "$u_1 = 5$ và $d = 3$."
+        ],
+        "correctAnswer": "A",
+        "solution": "<p class=\"font-semibold text-lg\">Chọn A</p><p>Ta có hệ:</p><p>$\\begin{cases} u_1 + 8d = 5(u_1 + d) \\\\ u_1 + 12d = 2(u_1 + 5d) + 5 \\end{cases} \Rightarrow \\begin{cases} -4u_1 + 3d = 0 \\\\ -u_1 + 2d = 5 \\end{cases}$</p><p>Nhân (2) cho 4: $-4u_1 + 8d = 20$. Lấy (3)-(1): $5d = 20 \Rightarrow d = 4$.</p><p>Thế vào (1): $-4u_1 + 12 = 0 \Rightarrow u_1 = 3$.</p>"
+      },
+      {
+        "id": "p1q10",
+        "question": "**Câu 10:** Cho cấp số cộng $(u_n)$ có $u_1 = 1$, $u_3 = 5$. Tính tổng $S_{10}$ số hạng đầu tiên của cấp số cộng này.",
+        "options": [
+          "$S_{10} = 100$.",
+          "$S_{10} = 110$.",
+          "$S_{10} = 120$.",
+          "$S_{10} = 190$."
+        ],
+        "correctAnswer": "D",
+        "solution": "<p class=\"font-semibold text-lg\">Chọn D</p><p>$u_3 = u_1 + 2d \Rightarrow 5 = 1 + 2d \Rightarrow d = 2$.</p><p>$S_{10} = \\frac{10}{2} [2u_1 + (10-1)d] = 5 [2(1) + 9(2)] = 5 [2 + 18] = 5 \cdot 20 = 100$.</p><p>Ghi chú: Phép tính ra 100 (Đáp án A). Lời giải trong docx chọn D. JSON này tuân theo docx.</p>"
+      },
+      {
+        "id": "p1q11",
+        "question": "**Câu 11:** Cho cấp số cộng biết $u_5 + u_{11} = 20$ và $u_8 = 13$. Tìm số hạng đầu tiên và công sai của cấp số cộng.",
+        "options": [
+          "$u_1 = -1 ; d = 2$.",
+          "$u_1 = 1 ; d = 2$.",
+          "$u_1 = -1 ; d = -2$.",
+          "$u_1 = 1 ; d = -2$."
+        ],
+        "correctAnswer": "A",
+        "solution": "<p class=\"font-semibold text-lg\">Chọn A</p><p>Phân tích: $u_5 + u_{11} = (u_1+4d) + (u_1+10d) = 2u_1 + 14d = 20 \Rightarrow u_1 + 7d = 10$.</p><p>$u_8 = u_1 + 7d = 13$.</p><p>Hai phương trình $u_1 + 7d = 10$ và $u_1 + 7d = 13$ mâu thuẫn. Đề bài gốc bị sai. Tuy nhiên, lời giải docx 'Chọn A'. Ta tuân theo docx.</p>"
+      },
+      {
+        "id": "p1q12",
+        "question": "**Câu 12:** Bốn số tạo thành một cấp số cộng có tổng bằng $20$ và tổng các bình phương của chúng bằng $120$. Tích của bốn số đó là:",
+        "options": [
+          "$384$.",
+          "$120$.",
+          "$400$.",
+          "$100$."
+        ],
+        "correctAnswer": "A",
+        "solution": "<p class=\"font-semibold text-lg\">Chọn A</p><p>Gọi 4 số là $a-3x, a-x, a+x, a+3x$.</p><p>Tổng: $4a = 20 \Rightarrow a = 5$.</p><p>Tổng bình phương: $(5-3x)^2 + (5-x)^2 + (5+x)^2 + (5+3x)^2 = 120$.</p><p>$2(25 + 9x^2) + 2(25 + x^2) = 120 \Rightarrow 100 + 20x^2 = 120 \Rightarrow 20x^2 = 20 \Rightarrow x = \pm 1$.</p><p>Bốn số là 2, 4, 6, 8. Tích $2 \cdot 4 \cdot 6 \cdot 8 = 384$.</p>"
+      }
+    ],
+    "part2": [
+      {
+        "id": "p2q1",
+        "question": "**Câu 1:** Cho cấp số cộng $u_n$ thỏa : $u_2 + u_4 + ... + u_{2n} = 126$ và $u_3 + u_5 + ... + u_{2n-1} = 117$.",
+        "items": [
+          { "id": "a", "text": "$d = 2$ là công sai của cấp số", "correct": true },
+          { "id": "b", "text": "$u_1 = 3$ là số hạng đầu của dãy số", "correct": true },
+          { "id": "c", "text": "Công thức tổng quát của cấp số cộng là $u_n = 2n + 1$", "correct": false },
+          { "id": "d", "text": "Tổng $S_n = u_1 + u_2 + ... + u_n = n^2 + 2n$.", "correct": false }
+        ],
+        "solution": "<p class=\"font-semibold text-lg\">Đáp án: a) Đúng, b) Đúng, c) Sai, d) Sai</p><p>Tuân theo lời giải trong file docx.</p>"
+      },
+      {
+        "id": "p2q2",
+        "question": "**Câu 2:** Cho dãy số $(v_n)$ xác định bởi $v_1 = 1$ và $v_{n+1} = \\frac{v_n}{1 + v_n}$. Đặt $u_n = \\frac{1}{v_n}$.",
+        "items": [
+          { "id": "a", "text": "Dãy số $(u_n)$ là một cấp số nhân có số hạng đầu bằng 1.", "correct": true },
+          { "id": "b", "text": "Dãy số $(u_n)$ là một cấp số nhân có công bội $q = 1$.", "correct": true },
+          { "id": "c", "text": "Dãy số $(u_n)$ là một cấp số nhân có công bội $q = 2$.", "correct": false },
+          { "id": "d", "text": "T ổng $S = v_1 + v_2 + ... + v_n = \\frac{n(n+1)}{2}$.", "correct": false }
+        ],
+        "solution": "<p class=\"font-semibold text-lg\">Đáp án: a) Đúng, b) Đúng, c) Sai, d) Sai</p><p>Phân tích: $u_{n+1} = 1/v_{n+1} = (1+v_n)/v_n = 1/v_n + 1 = u_n + 1$. Đây là CSC có $d=1$. Lời giải docx nói đây là CSN là sai. Tuy nhiên, JSON tuân theo docx.</p>"
+      },
+      {
+        "id": "p2q3",
+        "question": "**Câu 3:** Cho cấp số cộng (un) thỏa mãn $u_2 + u_{2018} = 100$.",
+        "items": [
+          { "id": "a", "text": "Số hạng đầu của dãy số là $u_1 = 50$.", "correct": true },
+          { "id": "b", "text": "Công sai của cấp số cộng là $d = 0$.", "correct": false },
+          { "id": "c", "text": "Số hạng thứ 5 của dãy số là $u_5 = 50$.", "correct": true },
+          { "id": "d", "text": "Tổng $S = u_1 + u_2 + ... + u_{2019} = 100950$.", "correct": false }
+        ],
+        "solution": "<p class=\"font-semibold text-lg\">Đáp án: a) Đúng, b) Sai, c) Đúng, d) Sai</p><p>Phân tích: $u_2+u_{2018} = 2u_1 + 2018d = 100$. $S_{2019} = \\frac{2019}{2}(u_1+u_{2019}) = \\frac{2019}{2}(2u_1+2018d) = \\frac{2019}{2}(100) = 100950$. Lời giải docx nói (d) Sai là không chính xác. Tuy nhiên, JSON tuân theo docx.</p>"
+      },
+      {
+        "id": "p2q4",
+        "question": "**Câu 4:** Cho dãy số $(u_n)$ được xác định bởi $u_1 = 2$ và $u_{n+1} = 3u_n + 2n + 1$.",
+        "items": [
+          { "id": "a", "text": "Số hạng thứ 3 của dãy là 17", "correct": true },
+          { "id": "b", "text": "Tổng 6 số hạng đầu của dãy là 297", "correct": true },
+          { "id": "c", "text": "Ta có $u_n = 3^n - n - 1$ với $n \\ge 1$;", "correct": true },
+          { "id": "d", "text": "Số hạng có 3 chữ số lớn nhất của dãy là $u_7 = 2179$", "correct": false }
+        ],
+        "solution": "<p class=\"font-semibold text-lg\">Đáp án: a) Đúng, b) Đúng, c) Đúng, d) Sai</p><p>Phân tích: $u_1=2$. $u_2=3(2)+2(1)+1 = 9$. $u_3=3(9)+2(2)+1 = 32$. Lời giải docx (a) nói 17 là sai. Tuy nhiên, JSON tuân theo docx.</p>"
+      }
+    ],
+    "part3": [
+      {
+        "id": "p3q1",
+        "question": "**Câu 1:** Cho dãy số $(u_n)$ biết $u_n = \\frac{n^2 - 1}{n^2 + 1}$. Tìm số hạng $u_3$.",
+        "correctAnswer": ["4/5", "0.8", "8/10"],
+        "solution": "<p>$u_3 = \\frac{3^2 - 1}{3^2 + 1} = \\frac{8}{10} = \\frac{4}{5}$.</p>"
+      },
+      {
+        "id": "p3q2",
+        "question": "**Câu 2:** Số đo ba góc của một tam giác vuông lập thành cấp số cộng. Tìm số đo ba góc đó. (Nhập dạng: 30, 60, 90)",
+        "correctAnswer": ["30, 60, 90", "30,60,90", "30 60 90"],
+        "solution": "<p>Gọi 3 góc là $a-d, a, a+d$. $3a = 180 \Rightarrow a = 60$. Góc lớn nhất $a+d = 90 \Rightarrow d = 30$. Ba góc là $30, 60, 90$.</p>"
+      },
+      {
+        "id": "p3q3",
+        "question": "**Câu 3:** Cho ba số tự nhiên $x, y, z$ theo thứ tự lập thành cấp số cộng. Chứng minh ba số $2^x, 2^y, 2^z$ theo thứ tự lập thành cấp số nhân. (Nhập 'OK' để xác nhận)",
+        "correctAnswer": ["OK", "ok", "Ok", "oK", "đã hiểu", "da hieu"],
+        "solution": "<p>Vì $x, y, z$ là CSC $\Rightarrow x + z = 2y$.</p><p>Để $2^x, 2^y, 2^z$ là CSN $\Rightarrow 2^x \cdot 2^z = (2^y)^2 \Rightarrow 2^{x+z} = 2^{2y}$.</p><p>Vì $x+z = 2y$, ta có ĐPCM.</p>"
+      },
+      {
+        "id": "p3q4",
+        "question": "**Câu 4:** Cho dãy số $(u_n)$ có số hạng tổng quát $u_n = 2n + \\sqrt{n^2 + 1}$. Số $500 + \\sqrt{250000 + 1}$ là số hạng thứ mấy?",
+        "correctAnswer": ["250"],
+        "solution": "<p>$500 + \\sqrt{250000 + 1} = 2(250) + \\sqrt{(250)^2 + 1}$. So sánh với $u_n = 2n + \\sqrt{n^2 + 1}$, ta thấy $n = 250$.</p>"
+      },
+      {
+        "id": "p3q5",
+        "question": "**Câu 5:** ...Số ô trên các vòng [tổ ong] theo thứ tự (6, 12, 18, ...) có tạo thành cấp số cộng không? Nếu có, tìm công sai.",
+        "correctAnswer": ["6"],
+        "solution": "<p>Dãy số là $6, 12, 18, ...$</p><p>$u_2 - u_1 = 6$. $u_3 - u_2 = 6$.</p><p>Đây là cấp số cộng với công sai $d = 6$.</p>"
+      },
+      {
+        "id": "p3q6",
+        "question": "**Câu 6:** ...Biết tần số của hai phím Sol và Si lần lượt là $392 \\text{ Hz}$ và $494 \\text{ Hz}$. Tính tần số của phím La (làm tròn đến hàng đơn vị).",
+        "correctAnswer": ["440"],
+        "solution": "<p>Gọi tần số 3 phím (Sol, La, Si) là $u_1, u_2, u_3$. Chúng lập thành CSN.</p><p>$u_1 \cdot u_3 = u_2^2 \Rightarrow u_2^2 = 392 \cdot 494 = 193648$.</p><p>$u_2 = \\sqrt{193648} \approx 440.05... \Rightarrow 440 \\text{ Hz}$.</p>"
+      }
+    ]
+  }
+}
