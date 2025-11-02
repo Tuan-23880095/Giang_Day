@@ -193,7 +193,7 @@
     });
 
         <!-- ======================= NAV TABS (REPLACE) ============================ -->
-    <script type="module">
+  
     customElements.define('nav-tabs', class extends HTMLElement{
       connectedCallback(){
         this.innerHTML = `
@@ -243,9 +243,7 @@
         setActive(); // chạy lần đầu
       }
     });
-    </script>
-
-
+ 
     // ======================= ROUTER & PAGES ======================
     const elView = document.getElementById('view');
 
