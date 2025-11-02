@@ -6,13 +6,17 @@
   <title>Trang chủ - Tài nguyên học tập</title>
   <!-- Tailwind via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts via <link> is safer than @import in <style> -->
+  <!-- Google Fonts: dùng <link> an toàn hơn @import trong <style> -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Font Awesome (icons) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- (Tùy chọn) stylesheet riêng của bạn nếu có rule thuần CSS, KHÔNG dùng @apply vì không build -->
   <link rel="stylesheet" href="./assets/css/styles.css" />
   <meta name="description" content="Ứng dụng ôn tập toán tĩnh, hỗ trợ nhiều đề, chấm điểm offline-first." />
 </head>
 <body class="antialiased bg-[#f8f7f4] text-gray-800" style="font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
 
+  <!-- Header giữ style tương tự trang cũ -->
   <header class="bg-white shadow-md">
     <div class="container mx-auto px-4 py-5">
       <h1 class="text-3xl font-bold text-blue-800">Trang chủ: Tài nguyên học tập</h1>
@@ -32,12 +36,9 @@
 
   <contact-footer></contact-footer>
 
-  <!-- Font Awesome (icons) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-  <!-- Single-file runtime (no build required) -->
+  <!-- Runtime 1 file, không cần build -->
   <script type="module">
-    // ---- Data (mock) ----
+    // ======================= DATA (mock) =======================
     const MOCK_DATA = {
       categories: {
         grades: [
@@ -60,21 +61,24 @@
       }
     };
 
-    // ---- Base component ----
+    // ======================= BASE COMPONENT =======================
     class BaseComponent extends HTMLElement {
       setState(p){ this.state = { ...(this.state||{}), ...p }; this.render?.(); }
     }
 
-    // ---- Content repository (mock) ----
+    // ======================= REPOSITORY (mock) ===================
     class ContentRepository { getItemsByCategoryId(id){ return Promise.resolve(MOCK_DATA.categories[id]||[]); } }
 
-    // ---- Item card ----
+    // ======================= ITEM CARD ===========================
     class ContentItemCard extends BaseComponent {
       connectedCallback(){ this.render(); }
       render(){
-        const t = this.getAttribute('data-title')||'', d=this.getAttribute('data-description')||'', i=this.getAttribute('data-icon')||'fas fa-circle', u=this.getAttribute('data-url')||'#';
+        const t = this.getAttribute('data-title')||'';
+        const d = this.getAttribute('data-description')||'';
+        const i = this.getAttribute('data-icon')||'fas fa-circle';
+        const u = this.getAttribute('data-url')||'#';
         this.innerHTML = `
-          <a href="${u}" class="content-card block h-full">
+          <a href="${u}" class="block h-full bg-white p-6 rounded-xl shadow-lg border border-gray-100 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
             <div class="flex items-start space-x-4">
               <div class="text-3xl text-blue-600 w-10 text-center"><i class="${i}"></i></div>
               <div>
@@ -87,7 +91,7 @@
     }
     customElements.define('content-item-card', ContentItemCard);
 
-    // ---- Category block ----
+    // ======================= CATEGORY BLOCK ======================
     class ContentCategory extends BaseComponent {
       constructor(){ super(); this.repo = new ContentRepository(); this.state={loading:true,items:[]}; }
       async connectedCallback(){
@@ -99,68 +103,90 @@
         this.setState({loading:false, items});
       }
       render(){
-        const body = this.state?.loading ? '<div class="text-gray-500 italic">Đang tải dữ liệu...</div>' : `
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            ${(this.state.items||[]).map(it=>`
-              <content-item-card data-title="${it.title}" data-description="${it.description}" data-icon="${it.icon}" data-url="${it.url}"></content-item-card>
-            `).join('')}
-          </div>`;
+        const body = this.state?.loading
+          ? '<div class="text-gray-500 italic">Đang tải dữ liệu...</div>'
+          : `
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              ${(this.state.items||[]).map(it=>`
+                <content-item-card data-title="${it.title}" data-description="${it.description}" data-icon="${it.icon}" data-url="${it.url}"></content-item-card>
+              `).join('')}
+            </div>`;
         this.innerHTML = `
           <section class="mb-12">
-            <h2 class="section-title"><i class="${this.iconClass} mr-3 text-blue-700"></i>${this.title}</h2>
+            <h2 class="text-2xl font-bold text-blue-800 mb-6 border-b-2 border-blue-200 pb-2">
+              <i class="${this.iconClass} mr-3 text-blue-700"></i>${this.title}
+            </h2>
             ${body}
           </section>`;
       }
     }
     customElements.define('content-category', ContentCategory);
 
-    // ---- Info & footer ----
-    customElements.define('my-info-card', class extends HTMLElement{ connectedCallback(){ this.innerHTML = `
-      <div class="info-card">
-        <img src="https://placehold.co/100x100/ffffff/333333?text=Avatar" alt="Avatar" class="w-24 h-24 rounded-full border-4 border-white mr-6" />
-        <div>
-          <h2 class="text-3xl font-bold">Thông tin của tôi</h2>
-          <p class="text-lg text-blue-200 mt-1">Chào mừng bạn đến với trang tài nguyên cá nhân.</p>
-        </div>
-      </div>`; }});
+    // ======================= INFO & FOOTER ========================
+    customElements.define('my-info-card', class extends HTMLElement{
+      connectedCallback(){ this.innerHTML = `
+        <div class="bg-gradient-to-r from-blue-700 to-blue-900 text-white p-8 rounded-xl shadow-2xl flex items-center">
+          <img src="https://placehold.co/100x100/ffffff/333333?text=Avatar" alt="Avatar" class="w-24 h-24 rounded-full border-4 border-white mr-6" />
+          <div>
+            <h2 class="text-3xl font-bold">Thông tin của tôi</h2>
+            <p class="text-lg text-blue-200 mt-1">Chào mừng bạn đến với trang tài nguyên cá nhân.</p>
+          </div>
+        </div>`; }
+    });
 
-    customElements.define('contact-footer', class extends HTMLElement{ connectedCallback(){ this.innerHTML = `
-      <footer class="contact-footer">
-        <div class="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div>
-            <h3 class="text-xl font-semibold text-white mb-4">Thông tin liên hệ</h3>
-            <p class="mb-2"><i class="fas fa-envelope w-6"></i> email-cua-ban@gmail.com</p>
-            <p class="mb-2"><i class="fas fa-phone w-6"></i> +84 123 456 789</p>
-            <p class="mb-2"><i class="fas fa-map-marker-alt w-6"></i> TP. HCM</p>
+    customElements.define('contact-footer', class extends HTMLElement{
+      connectedCallback(){ this.innerHTML = `
+        <footer class="bg-gray-800 text-gray-300 p-8 mt-12">
+          <div class="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+              <h3 class="text-xl font-semibold text-white mb-4">Thông tin liên hệ</h3>
+              <p class="mb-2"><i class="fas fa-envelope w-6"></i> email-cua-ban@gmail.com</p>
+              <p class="mb-2"><i class="fas fa-phone w-6"></i> +84 123 456 789</p>
+              <p class="mb-2"><i class="fas fa-map-marker-alt w-6"></i> TP. HCM</p>
+            </div>
+            <div>
+              <h3 class="text-xl font-semibold text-white mb-4">Giới thiệu</h3>
+              <p>Nơi chia sẻ tài nguyên, bài giảng và các dự án STEM.</p>
+            </div>
+            <div>
+              <h3 class="text-xl font-semibold text-white mb-4">Liên kết nhanh</h3>
+              <ul>
+                <li><a href="#/" class="hover:text-white">Trang chủ</a></li>
+                <li><a href="#/quiz/sequences-01" class="hover:text-white">Đề mẫu</a></li>
+              </ul>
+            </div>
           </div>
-          <div>
-            <h3 class="text-xl font-semibold text-white mb-4">Giới thiệu</h3>
-            <p>Nơi chia sẻ tài nguyên, bài giảng và các dự án STEM.</p>
-          </div>
-          <div>
-            <h3 class="text-xl font-semibold text-white mb-4">Liên kết nhanh</h3>
-            <ul>
-              <li><a href="#/" class="hover:text-white">Trang chủ</a></li>
-              <li><a href="#/quiz/sequences-01" class="hover:text-white">Đề mẫu</a></li>
-            </ul>
-          </div>
-        </div>
-      </footer>`; }});
+        </footer>`; }
+    });
 
-    // ---- Nav tabs ----
-    customElements.define('nav-tabs', class extends HTMLElement{ connectedCallback(){ this.innerHTML = `
-      <nav class="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div class="container mx-auto px-4">
-          <div id="nav-tabs" class="flex space-x-4 py-2">
-            <a href="#/" class="tab-button active">Tổng quan</a>
-            <a href="#/quiz/sequences-01" class="tab-button">Phần 1–3 (Đề: sequences-01)</a>
-          </div>
-        </div>
-      </nav>`;
-      const tabs = this.querySelectorAll('.tab-button');
-      const setActive = () => { tabs.forEach(t=>t.classList.remove('active')); const m=[...tabs].find(a=>a.getAttribute('href')===(location.hash||'#/')); m?.classList.add('active'); };
-      addEventListener('hashchange', setActive); setActive();
-    }});
+    // ======================= NAV TABS =============================
+    customElements.define('nav-tabs', class extends HTMLElement{
+      connectedCallback(){
+        this.innerHTML = `
+          <nav class="bg-white border-b border-gray-200 sticky top-0 z-10">
+            <div class="container mx-auto px-4">
+              <div id="nav-tabs" class="flex space-x-4 py-2">
+                <a href="#/" class="px-4 py-3 font-semibold text-gray-600 border-b-4 border-transparent transition-all duration-300 tab-button active">Tổng quan</a>
+                <a href="#/quiz/sequences-01" class="px-4 py-3 font-semibold text-gray-600 border-b-4 border-transparent transition-all duration-300 tab-button">Phần 1–3 (Đề: sequences-01)</a>
+              </div>
+            </div>
+          </nav>`;
+        const tabs = this.querySelectorAll('.tab-button');
+        const setActive = () => {
+          tabs.forEach(t=>{
+            t.classList.remove('active','text-blue-700','border-blue-600');
+            t.classList.add('text-gray-600','border-transparent');
+          });
+          const current = [...tabs].find(a => a.getAttribute('href') === (location.hash||'#/'));
+          if(current){
+            current.classList.add('active','text-blue-700','border-blue-600');
+            current.classList.remove('text-gray-600','border-transparent');
+          }
+        };
+        addEventListener('hashchange', setActive);
+        setActive();
+      }
+    });
   </script>
 </body>
 </html>
