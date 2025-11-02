@@ -236,117 +236,18 @@
         <p class="mt-6"><a href="#/" class="text-blue-700 underline">← Quay lại trang chủ</a></p>
       </section>`;
   }
-      async function loadQuizJson(id){
-        const url = `./content/quizzes/${id}.json`;
-        const res = await fetch(url);
-        if (!res.ok) throw new Error(`Không tải được ${url}`);
-        return res.json();
-       }
-    function md2html(s){
-      return (s||"")
-        .replace(/^# (.*)$/gm,'<h1 class="text-2xl font-bold mb-2">$1</h1>')
-        .replace(/\*\*(.*?)\*\*/g,'<b>$1</b>')
-        .replace(/\n/g,'<br/>');
+
+
+    function showQuiz(id){
+      if(!elView) return;
+      elView.innerHTML = `
+        <section class="bg-white p-6 rounded-xl shadow border">
+          <h2 class="text-2xl font-bold mb-2">Đề luyện tập: ${id}</h2>
+          <p class="text-gray-600">Trang làm bài cho đề <code>${id}</code> sẽ hiển thị ở đây. (Placeholder demo)</p>
+          <p class="mt-4"><a href="#/" class="text-blue-700 underline">← Quay lại trang chủ</a></p>
+        </section>
+      `;
     }
-    function showScore(score, total){
-      let bar = document.querySelector('div[data-scorebar]');
-      if (!bar){
-        bar = document.createElement('div');
-        bar.setAttribute('data-scorebar','');
-        bar.className = 'score-bar bg-blue-800 text-white p-4 text-xl font-bold text-center';
-        document.body.appendChild(bar);
-      }
-      bar.textContent = `Điểm số: ${score} / ${total}`;
-    }
-    async function showQuiz(id){
-      const quiz = await loadQuizJson(id);
-      elView.innerHTML = '';
-    
-      const h = document.createElement('h2');
-      h.className = 'text-2xl font-bold mb-4';
-      h.textContent = `Đề luyện tập: ${quiz.title || id}`;
-    
-      const wrap = document.createElement('div');
-      wrap.className = 'space-y-4';
-    
-      // gom tất cả câu hỏi về 1 mảng theo thứ tự part1→part2→part3
-      const blocks = [ ...(quiz.parts?.part1||[]), ...(quiz.parts?.part2||[]), ...(quiz.parts?.part3||[]) ];
-    
-      blocks.forEach(b => {
-        const card = document.createElement('div');
-        card.className = 'question-card';
-    
-        if (b.type==='choice'){
-          card.innerHTML = `
-            <div class="font-medium text-lg">${md2html(b.prompt)}</div>
-            <ul class="list-none space-y-2 mt-4">
-              ${b.choices.map((c,i)=>`
-                <li><label class="flex gap-3 items-start">
-                  <input name="${b.id}" type="radio" value="${i}" class="mt-1"/>
-                  <span class="text-gray-700">${c}</span>
-                </label></li>`).join('')}
-            </ul>`;
-          card.dataset.answer = String(b.answerIndex);
-        }
-    
-        if (b.type==='tf'){
-          card.innerHTML = `
-            <div class="font-medium text-lg">${md2html(b.prompt)}</div>
-            <div class="mt-3 flex gap-6">
-              <label class="flex items-center gap-2"><input type="radio" name="${b.id}" value="true"> Đúng</label>
-              <label class="flex items-center gap-2"><input type="radio" name="${b.id}" value="false"> Sai</label>
-            </div>`;
-          card.dataset.answer = String(b.answer);
-        }
-    
-        if (b.type==='sa'){
-          card.innerHTML = `
-            <div class="font-medium text-lg">${md2html(b.prompt)}</div>
-            <input type="text" class="mt-3 w-full border rounded px-3 py-2" placeholder="Nhập đáp án" />`;
-          card.dataset.accepted = JSON.stringify(b.acceptedAnswers||[]);
-        }
-    
-        // Lời giải (tùy chọn)
-        if (b.solutionHtml){
-          const sol = document.createElement('details');
-          sol.className = 'solution-content mt-4';
-          sol.innerHTML = `<summary class="solution-toggle cursor-pointer inline-block">Xem gợi ý/giải</summary>${b.solutionHtml}`;
-          card.appendChild(sol);
-        }
-    
-        wrap.appendChild(card);
-      });
-    
-      // Nút chấm điểm
-      const controls = document.createElement('div');
-      controls.className = 'mt-4 flex gap-3';
-      controls.innerHTML = `
-        <button id="btn-check" class="solution-toggle">Kiểm tra</button>
-        <button id="btn-reset" class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300">Đặt lại</button>`;
-    
-      elView.append(h, wrap, controls);
-    
-      document.getElementById('btn-check').onclick = () => {
-        let score = 0, total = 0;
-        wrap.querySelectorAll('.question-card').forEach((card)=>{
-          const ans = card.dataset.answer;
-          const acc = card.dataset.accepted ? JSON.parse(card.dataset.accepted) : null;
-          total++;
-          if (ans!==undefined){
-            // MCQ/TF
-            const name = card.querySelector('input')?.getAttribute('name');
-            const chosen = wrap.querySelector(`input[name='${name}']:checked`);
-            if (chosen && String(chosen.value) === String(ans)) score++;
-          } else if (acc){
-            // SA
-            const val = card.querySelector('input')?.value?.trim()?.replace(/\s+/g,'').toLowerCase();
-            if (acc.some(a=>a.replace(/\s+/g,'').toLowerCase()===val)) score++;
-          }
-        });
-        showScore(score, total);
-      };
-    
-      document.getElementById('btn-reset').onclick = ()=> location.reload();
 
     function route(){
       const h = location.hash || '#/'
