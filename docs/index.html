@@ -76,6 +76,36 @@
 
   <!-- Runtime 1 file, không cần build -->
   <script type="module">
+        // ĐƯỜNG DẪN TƯƠNG ĐỐI (vì Pages đang phục vụ từ /Giang_Day/docs/)
+    const CONTENT_BASE = './content';
+    
+    async function loadQuizJson(id){
+      const url = `${CONTENT_BASE}/quizzes/${id}.json`;
+      const res = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) throw new Error(`Không tải được ${url}`);
+      return res.json();
+    }
+    
+    // Chuyển Markdown rất tối giản → HTML cho phần prompt/solution
+    function md2html(s=''){
+      return String(s)
+        .replace(/^# (.*)$/gm, '<h1 class="text-2xl font-bold mb-2">$1</h1>')
+        .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+        .replace(/\n/g, '<br/>');
+    }
+    
+    // Thanh điểm cố định dưới
+    function showScore(score, total){
+      let bar = document.querySelector('div[data-scorebar]');
+      if(!bar){
+        bar = document.createElement('div');
+        bar.setAttribute('data-scorebar','');
+        bar.className = 'score-bar bg-blue-800 text-white p-4 text-xl font-bold text-center';
+        document.body.appendChild(bar);
+      }
+      bar.textContent = `Điểm số: ${score} / ${total}`;
+    }
+
     // ======================= DATA (mock) =======================
     const MOCK_DATA = {
       categories: {
@@ -151,7 +181,7 @@
           : `
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               ${(this.state.items||[]).map(it=>`
-                <content-item-card data-title="${it.title}" data-description="${it.description}" data-icon="${it.icon}" data-url="${it.url}"></content-item-card>
+                <content-item-card data-title="${it.title}" data-description="${it.description}" data-icon="${it.icon}" data-url="${it.url}"><./content-item-card>
               `).join('')}
             </div>`;
         this.innerHTML = `
@@ -213,7 +243,7 @@
                 <!-- === ĐÃ CẬP NHẬT === -->
                 <a href="#/quiz/de-cuoi-chuong-III" class="px-4 py-3 font-semibold text-gray-600 border-b-4 border-transparent transition-all duration-300 tab-button">Đề ❶ (Mới)</a>
                 <!-- =================== -->
-                
+                <a href="#/quiz/sequences-01" ...>Phần 1–3 (Đề: sequences-01)</a>
                 <a href="#/grade/10" class="px-4 py-3 font-semibold text-gray-600 border-b-4 border-transparent transition-all duration-300 tab-button">Khối 10</a>
                 <a href="#/grade/11" class="px-4 py-3 font-semibold text-gray-600 border-b-4 border-transparent transition-all duration-300 tab-button">Khối 11</a>
               </div>
@@ -272,10 +302,10 @@
       hideScoreBar(); // Ẩn thanh điểm khi ở trang chủ
       elView.innerHTML = `
         <my-info-card class="mb-10"></my-info-card>
-        <content-category data-category-id="grades"  data-title="Các khối lớp"             data-icon-class="fas fa-graduation-cap"></content-category>
-        <content-category data-category-id="math"    data-title="Chủ đề Toán học"          data-icon-class="fas fa-calculator"></content-category>
-        <content-category data-category-id="science" data-title="Chủ đề Khoa học Tự nhiên"  data-icon-class="fas fa-flask"></content-category>
-        <content-category data-category-id="other"   data-title="Hoạt động khác"           data-icon-class="fas fa-palette"></content-category>
+        <content-category data-category-id="grades"  data-title="Các khối lớp"             data-icon-class="fas fa-graduation-cap"><./content-category>
+        <content-category data-category-id="math"    data-title="Chủ đề Toán học"          data-icon-class="fas fa-calculator"><./content-category>
+        <content-category data-category-id="science" data-title="Chủ đề Khoa học Tự nhiên"  data-icon-class="fas fa-flask"><./content-category>
+        <content-category data-category-id="other"   data-title="Hoạt động khác"           data-icon-class="fas fa-palette"><./content-category>
       `;
     }
 
@@ -306,41 +336,124 @@
     }
 
     // --- Hiển thị trang Quiz (Nâng cấp) ---
-    async function showQuiz(id) {
-        if (!elView) return;
+           async function showQuiz(id){
+          if(!elView) return;
         
-        // Reset
-        userScore = { part1: {}, part2: {}, part3: {} };
-        elView.innerHTML = `<div class="text-lg text-blue-700 italic">Đang tải đề ${id}...</div>`;
-        
-        try {
-            // 1. Tải dữ liệu JSON
-            const response = await fetch(`content/quizzes/${id}.json`);
-            if (!response.ok) throw new Error(`Không thể tải file: ${id}.json`);
-            currentQuizData = await response.json();
-            
-            const quiz = currentQuizData;
-            
-            // 2. Render khung
+          // 1) Nạp dữ liệu đề
+          let j;
+          try {
+            j = await loadQuizJson(id);
+          } catch (e){
             elView.innerHTML = `
-                <h2 class="text-3xl font-bold text-blue-800">${quiz.title}</h2>
-                <div id="quiz-part-1" class="mt-8"></div>
-                <div id="quiz-part-2" class="mt-8"></div>
-                <div id="quiz-part-3" class="mt-8"></div>
-            `;
-            
-            // 3. Render từng phần
-            renderPart1(quiz.parts.part1);
-            renderPart2(quiz.parts.part2);
-            renderPart3(quiz.parts.part3);
-            
-            // 4. Render công thức toán
-            renderMathInElement(elView, {
-                delimiters: [
-                    {left: "$$", right: "$$", display: true}, {left: "$", right: "$", display: false},
-                    {left: "\\(", right: "\\)", display: false}, {left: "\\[", right: "\\]", display: true}
-                ]
+              <section class="bg-white p-6 rounded-xl shadow border">
+                <h2 class="text-2xl font-bold mb-2">Đề luyện tập: ${id}</h2>
+                <p class="text-red-600">Không tải được dữ liệu: ${(e && e.message) || e}</p>
+                <p class="mt-4"><a href="#/" class="text-blue-700 underline">← Quay lại trang chủ</a></p>
+              </section>`;
+            return;
+          }
+        
+          // 2) Khung trang
+          elView.innerHTML = '';
+          const h = document.createElement('header');
+          h.className = 'mb-4';
+          h.innerHTML = `
+            <h2 class="text-2xl font-bold">Đề luyện tập: ${j.title || id}</h2>
+            <p class="text-gray-600">Chọn đáp án và bấm <b>Kiểm tra</b> để chấm điểm.</p>
+          `;
+        
+          const wrap = document.createElement('div');
+          wrap.className = 'space-y-4';
+        
+          // 3) Gom tất cả câu hỏi theo thứ tự part1 → part2 → part3
+          const blocks = [];
+          (j.parts?.part1 || []).forEach(q => blocks.push({ kind: 'choice', q }));
+          (j.parts?.part2 || []).forEach(q => blocks.push({ kind: 'tf', q }));
+          (j.parts?.part3 || []).forEach(q => blocks.push({ kind: 'sa', q }));
+        
+          // 4) Render từng câu
+          blocks.forEach((b, idx) => {
+            const card = document.createElement('div');
+            card.className = 'question-card bg-white p-6 rounded-xl shadow-lg border border-gray-100';
+        
+            if (b.kind === 'choice'){
+              card.innerHTML = `
+                <div class="font-medium text-lg">${md2html(b.q.prompt)}</div>
+                <ul class="list-none space-y-2 mt-4">
+                  ${b.q.choices.map((c, i) => `
+                    <li>
+                      <label class="flex gap-3 items-start">
+                        <input type="radio" name="${b.q.id}" value="${i}" class="mt-1" />
+                        <span class="text-gray-700">${md2html(c)}</span>
+                      </label>
+                    </li>
+                  `).join('')}
+                </ul>`;
+              card.dataset.answer = String(b.q.answerIndex);
+            }
+        
+            if (b.kind === 'tf'){
+              card.innerHTML = `
+                <div class="font-medium text-lg">${md2html(b.q.prompt)}</div>
+                <div class="mt-3 flex gap-6">
+                  <label class="flex items-center gap-2"><input type="radio" name="${b.q.id}" value="true"> Đúng</label>
+                  <label class="flex items-center gap-2"><input type="radio" name="${b.q.id}" value="false"> Sai</label>
+                </div>`;
+              card.dataset.answer = String(b.q.answer);
+            }
+        
+            if (b.kind === 'sa'){
+              card.innerHTML = `
+                <div class="font-medium text-lg">${md2html(b.q.prompt)}</div>
+                <input type="text" class="mt-3 w-full border rounded px-3 py-2" placeholder="Nhập đáp án" />`;
+              card.dataset.accepted = JSON.stringify(b.q.acceptedAnswers || []);
+            }
+        
+            // Lời giải (nếu có)
+            if (b.q.solutionHtml){
+              const sol = document.createElement('details');
+              sol.className = 'solution-content mt-4';
+              sol.innerHTML = `<summary class="solution-toggle cursor-pointer inline-block">Xem gợi ý/giải</summary>${b.q.solutionHtml}`;
+              card.appendChild(sol);
+            }
+        
+            wrap.appendChild(card);
+          });
+        
+          // 5) Nút chấm điểm
+          const controls = document.createElement('div');
+          controls.className = 'mt-6 flex gap-3';
+          controls.innerHTML = `
+            <button id="btn-check" class="solution-toggle px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Kiểm tra</button>
+            <button id="btn-reset" class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300">Đặt lại</button>
+            <a href="#/" class="ml-2 text-blue-700 underline self-center">← Quay lại trang chủ</a>
+          `;
+        
+          elView.append(h, wrap, controls);
+        
+          // 6) Logic chấm điểm
+          document.getElementById('btn-check').onclick = () => {
+            let score = 0, total = 0;
+            wrap.querySelectorAll('.question-card').forEach((card) => {
+              const ans = card.dataset.answer;
+              const acc = card.dataset.accepted ? JSON.parse(card.dataset.accepted) : null;
+              total++;
+              if (ans !== undefined){ // MCQ/TF
+                const name = card.querySelector('input')?.getAttribute('name');
+                const chosen = wrap.querySelector(`input[name='${name}']:checked`);
+                if (chosen && String(chosen.value) === String(ans)) score++;
+              } else if (acc){        // SA
+                const val = card.querySelector('input')?.value?.trim()?.replace(/\s+/g,'').toLowerCase();
+                if (acc.some(a => a.replace(/\s+/g,'').toLowerCase() === val)) score++;
+              }
             });
+            showScore(score, total);
+            // khoá các input sau khi chấm
+            wrap.querySelectorAll('input').forEach(i => i.disabled = true);
+          };
+          document.getElementById('btn-reset').onclick = () => location.reload();
+        }
+
             
             // 5. Hiện thanh điểm
             updateScoreDisplay(quiz.totalPoints || 34);
