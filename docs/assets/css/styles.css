@@ -1,13 +1,12 @@
-/* Các tiện ích bổ sung ngoài Tailwind (ít, để giữ đúng giao diện) */
-.tab-button { @apply px-4 py-3 font-semibold text-gray-600 border-b-4 border-transparent transition-all duration-300; }
-.tab-button.active { @apply text-blue-700 border-blue-600; }
-.tab-button:hover:not(.active) { @apply text-gray-900 border-gray-300; }
-
-
-.question-card { @apply bg-white p-6 rounded-xl shadow-lg border border-gray-100 transition-all duration-300; }
-.solution-toggle { @apply px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg shadow-sm hover:bg-blue-700; }
-.solution-content { @apply mt-4 p-4 bg-gray-50 border border-gray-200 rounded-lg; }
-
-
-/* Thanh điểm cố định đáy màn hình */
-.score-bar { position: fixed; left: 0; bottom: 0; width: 100%; }
+/* Utility-like CSS compatible with GitHub Pages (no build step) */
+.content-card { background:#fff; padding:1.5rem; border-radius:0.75rem; box-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -2px rgba(0,0,0,.05); border:1px solid #f3f4f6; transition:transform .2s ease, box-shadow .2s ease; }
+.content-card:hover { transform: translateY(-2px); box-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 10px 10px -5px rgba(0,0,0,.04); }
+.section-title { font-size:1.5rem; font-weight:700; color:#1e40af; margin-bottom:1.5rem; padding-bottom:.5rem; border-bottom:2px solid #bfdbfe; }
+.info-card { background:linear-gradient(90deg,#1d4ed8,#1e3a8a); color:#fff; padding:2rem; border-radius:0.75rem; box-shadow:0 25px 50px -12px rgba(0,0,0,.25); display:flex; align-items:center; }
+.contact-footer { background:#1f2937; color:#d1d5db; padding:2rem; margin-top:3rem; border-top-left-radius:.75rem; border-top-right-radius:.75rem; }
+/* Tabs */
+.tab-button { padding:0.75rem 1rem; font-weight:600; color:#4b5563; border-bottom:4px solid transparent; transition:all .2s; display:inline-block; }
+.tab-button.active { color:#1d4ed8; border-bottom-color:#1e40af; }
+.tab-button:hover:not(.active) { color:#111827; border-bottom-color:#d1d5db; }
+/* Score bar (reserved for future) */
+.score-bar { position:fixed; left:0; bottom:0; width:100%; }
