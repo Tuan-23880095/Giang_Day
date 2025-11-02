@@ -4,19 +4,60 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Trang chủ - Tài nguyên học tập</title>
-  <!-- Tailwind via CDN -->
+  
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts: dùng <link> an toàn hơn @import trong <style> -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <!-- Font Awesome (icons) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <!-- (Tùy chọn) stylesheet riêng; KHÔNG dùng @apply vì không build -->
-  <link rel="stylesheet" href="./assets/css/styles.css" />
-  <meta name="description" content="Ứng dụng ôn tập toán tĩnh, hỗ trợ nhiều đề, chấm điểm offline-first." />
-</head>
-<body class="antialiased bg-[#f8f7f4] text-gray-800" style="font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
+  
+  <!-- KaTeX (Thư viện công thức toán) - Rất quan trọng cho quiz -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
 
-  <!-- Header giữ style tương tự trang cũ -->
+  <!-- 
+    CẬP NHẬT:
+    1. Thêm KaTeX (toán).
+    2. Thêm file CSS tùy chỉnh (giống file gốc).
+    3. Thêm <div id="score-display"> cho thanh điểm.
+    4. Cập nhật MOCK_DATA và hàm route() để thêm đề mới.
+    5. Viết lại hàm showQuiz() để TẢI (fetch) JSON và RENDER quiz tương tác.
+  -->
+  
+  <style>
+    body { font-family: Inter, system-ui, sans-serif; }
+    
+    /* Các style từ file gốc (styles.css / index.html gốc) */
+    .tab-button { @apply px-4 py-3 font-semibold text-gray-600 border-b-4 border-transparent transition-all duration-300; }
+    .tab-button.active { @apply text-blue-700 border-blue-600; }
+    .tab-button:hover:not(.active) { @apply text-gray-900 border-gray-300; }
+
+    .question-card { @apply bg-white p-6 rounded-xl shadow-lg border border-gray-100 transition-all duration-300 mb-6; }
+    
+    .check-button {
+        @apply px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg shadow-sm hover:bg-blue-700 transition-colors duration-200 cursor-pointer;
+    }
+    .check-button:disabled {
+        @apply bg-gray-400 cursor-not-allowed hover:bg-gray-400;
+    }
+        
+    .solution-content { @apply mt-4 p-4 bg-gray-50 border border-gray-200 rounded-lg; }
+    .katex { font-size: 1.1em !important; }
+
+    /* Lớp cho đáp án sau khi kiểm tra */
+    .correct-answer { @apply bg-green-50 border-green-300; }
+    .incorrect-answer { @apply bg-red-50 border-red-300; }
+    .correct-answer label, .correct-answer span { @apply font-semibold text-green-700; }
+    .incorrect-answer label, .incorrect-answer span { @apply font-semibold text-red-700; }
+
+    /* Thanh điểm cố định */
+    #score-display {
+        @apply fixed bottom-0 left-0 w-full bg-blue-800 text-white p-4 text-xl font-bold shadow-lg text-center z-20 transition-all duration-300;
+    }
+  </style>
+
+</head>
+<body class="antialiased bg-[#f8f7f4] text-gray-800 pb-24"> <!-- Thêm padding-bottom -->
+
   <header class="bg-white shadow-md">
     <div class="container mx-auto px-4 py-5">
       <h1 class="text-3xl font-bold text-blue-800">Trang chủ: Tài nguyên học tập</h1>
@@ -26,11 +67,12 @@
 
   <nav-tabs></nav-tabs>
 
-  <!-- CHỈ một <main>; nội dung động sẽ được router render vào đây -->
   <main id="view" class="container mx-auto p-4 md:p-8"></main>
 
-  <!-- Footer luôn ở ngoài <main> để không bị router ghi đè -->
   <contact-footer></contact-footer>
+
+  <!-- Thanh điểm (bị ẩn ban đầu) -->
+  <div id="score-display" class="hidden">Điểm số: 0 / 0</div>
 
   <!-- Runtime 1 file, không cần build -->
   <script type="module">
@@ -43,7 +85,12 @@
           { id: 'g11', title: 'Khối 11', description: 'Tài nguyên học tập cho lớp 11', icon: 'fas fa-atom', url: '#/grade/11' }
         ],
         math: [
-          { id: 'm1', title: 'Dãy số & Cấp số', description: 'Ôn tập dãy số, CSC, CSN', icon: 'fas fa-sort-numeric-down', url: '#/quiz/sequences-01' },
+          // { id: 'm1', title: 'Dãy số & Cấp số (Đề mẫu)', description: 'Ôn tập dãy số, CSC, CSN', icon: 'fas fa-sort-numeric-down', url: '#/quiz/sequences-01' },
+          
+          // === ĐÃ CẬP NHẬT ===
+          { id: 'm-new-1', title: 'Đề ❶: Cuối chương III', description: 'Đề thi từ file .docx của bạn', icon: 'fas fa-file-word', url: '#/quiz/de-cuoi-chuong-III' },
+          // ===================
+          
           { id: 'm2', title: 'Hình học Oxyz', description: 'Chuyên đề không gian Oxyz', icon: 'fas fa-cube', url: '#/subject/oxyz' }
         ],
         science: [
@@ -129,7 +176,6 @@
           </div>
         </div>`; }
     });
-
     customElements.define('contact-footer', class extends HTMLElement{
       connectedCallback(){ this.innerHTML = `
         <footer class="bg-gray-800 text-gray-300 p-8 mt-12">
@@ -148,7 +194,7 @@
               <h3 class="text-xl font-semibold text-white mb-4">Liên kết nhanh</h3>
               <ul>
                 <li><a href="#/" class="hover:text-white">Trang chủ</a></li>
-                <li><a href="#/quiz/sequences-01" class="hover:text-white">Đề mẫu</a></li>
+                <li><a href="#/quiz/de-cuoi-chuong-III" class="hover:text-white">Đề mới</a></li>
               </ul>
             </div>
           </div>
@@ -163,8 +209,13 @@
             <div class="container mx-auto px-4">
               <div id="nav-tabs" class="flex space-x-4 py-2">
                 <a href="#/" class="px-4 py-3 font-semibold text-gray-600 border-b-4 border-transparent transition-all duration-300 tab-button active">Tổng quan</a>
-                <a href="#/quiz/sequences-01" class="px-4 py-3 font-semibold text-gray-600 border-b-4 border-transparent transition-all duration-300 tab-button">Phần 1–3 (Đề: sequences-01)</a>
-                <a href="#/grade/6" class="px-4 py-3 font-semibold text-gray-600 border-b-4 border-transparent transition-all duration-300 tab-button">Khối 6</a>
+                
+                <!-- === ĐÃ CẬP NHẬT === -->
+                <a href="#/quiz/de-cuoi-chuong-III" class="px-4 py-3 font-semibold text-gray-600 border-b-4 border-transparent transition-all duration-300 tab-button">Đề ❶ (Mới)</a>
+                <!-- =================== -->
+                
+                <a href="#/grade/10" class="px-4 py-3 font-semibold text-gray-600 border-b-4 border-transparent transition-all duration-300 tab-button">Khối 10</a>
+                <a href="#/grade/11" class="px-4 py-3 font-semibold text-gray-600 border-b-4 border-transparent transition-all duration-300 tab-button">Khối 11</a>
               </div>
             </div>
           </nav>`;
@@ -187,9 +238,38 @@
 
     // ======================= ROUTER ===============================
     const elView = document.getElementById('view');
+    const elScoreBar = document.getElementById('score-display');
+    let currentQuizData = null; // Biến lưu trữ dữ liệu quiz hiện tại
+    let userScore = {}; // Biến lưu điểm
 
+    // Ẩn thanh điểm
+    function hideScoreBar() {
+        elScoreBar.classList.add('hidden');
+    }
+    // Cập nhật và hiện thanh điểm
+    function updateScoreDisplay(totalPoints) {
+        let totalCorrect = 0;
+        
+        Object.values(userScore.part1 || {}).forEach(answer => {
+            if (answer.isCorrect) totalCorrect++;
+        });
+        Object.values(userScore.part2 || {}).forEach(question => {
+            Object.values(question).forEach(subAnswer => {
+                if (subAnswer.isCorrect) totalCorrect++;
+            });
+        });
+        Object.values(userScore.part3 || {}).forEach(answer => {
+            if (answer.isCorrect) totalCorrect++;
+        });
+
+        elScoreBar.textContent = `Điểm số: ${totalCorrect} / ${totalPoints || 0}`;
+        elScoreBar.classList.remove('hidden');
+    }
+    
+    // --- Hiển thị trang chủ ---
     function showHome(){
       if(!elView) return;
+      hideScoreBar(); // Ẩn thanh điểm khi ở trang chủ
       elView.innerHTML = `
         <my-info-card class="mb-10"></my-info-card>
         <content-category data-category-id="grades"  data-title="Các khối lớp"             data-icon-class="fas fa-graduation-cap"></content-category>
@@ -199,61 +279,252 @@
       `;
     }
 
-// Ví dụ minh hoạ cách mở rộng hàm showGrade() cho route #/grade/:id
-// Hàm này có thể thay vào file index-fixed.html hiện tại
-  
-  function showGrade(grade) {
-    elView.innerHTML = `
-      <section class="mb-8">
-        <h2 class="section-title text-2xl font-bold mb-2">
-          <i class="fas fa-school mr-3 text-blue-700"></i>
-          Tài nguyên cho khối ${grade}
-        </h2>
-        <p class="text-gray-600 mb-4">(Bạn có thể liệt kê các chủ đề hoặc đề minh hoạ cho khối này.)</p>
-  
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <a href="#/quiz/sequences-01" class="block bg-white p-6 rounded-xl shadow hover:shadow-xl transition">
-            <div class="flex items-center gap-3">
-              <i class="fas fa-file-alt text-2xl text-blue-700"></i>
-              <div>
-                <h3 class="text-xl font-semibold text-gray-800">Đề minh hoạ: Dãy số & Cấp số</h3>
-                <p class="text-gray-600">Ôn tập dãy số, cấp số cộng, cấp số nhân.</p>
-              </div>
+    // --- Hiển thị trang khối học ---
+    function showGrade(grade) {
+        hideScoreBar();
+        elView.innerHTML = `
+        <section class="mb-8">
+            <h2 class="text-2xl font-bold text-blue-800 mb-6 border-b-2 border-blue-200 pb-2">
+            <i class="fas fa-school mr-3 text-blue-700"></i>
+            Tài nguyên cho khối ${grade}
+            </h2>
+            <p class="text-gray-600 mb-4">(Đây là trang ví dụ. Bạn có thể thêm nội dung cho khối này bằng cách sửa MOCK_DATA.)</p>
+    
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <a href="#/quiz/de-cuoi-chuong-III" class="block bg-white p-6 rounded-xl shadow hover:shadow-xl transition">
+                <div class="flex items-center gap-3">
+                <i class="fas fa-file-alt text-2xl text-blue-700"></i>
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-800">Đề minh hoạ: Cuối chương III</h3>
+                    <p class="text-gray-600">Ôn tập dãy số, cấp số cộng, cấp số nhân.</p>
+                </div>
+                </div>
+            </a>
             </div>
-          </a>
-  
-          <a href="#/subject/geometry" class="block bg-white p-6 rounded-xl shadow hover:shadow-xl transition">
-            <div class="flex items-center gap-3">
-              <i class="fas fa-drafting-compass text-2xl text-blue-700"></i>
-              <div>
-                <h3 class="text-xl font-semibold text-gray-800">Chủ đề: Hình học không gian</h3>
-                <p class="text-gray-600">Ôn tập khối chóp, lăng trụ, góc giữa đường và mặt.</p>
-              </div>
-            </div>
-          </a>
-        </div>
-  
-        <p class="mt-6"><a href="#/" class="text-blue-700 underline">← Quay lại trang chủ</a></p>
-      </section>`;
-  }
-
-
-    function showQuiz(id){
-      if(!elView) return;
-      elView.innerHTML = `
-        <section class="bg-white p-6 rounded-xl shadow border">
-          <h2 class="text-2xl font-bold mb-2">Đề luyện tập: ${id}</h2>
-          <p class="text-gray-600">Trang làm bài cho đề <code>${id}</code> sẽ hiển thị ở đây. (Placeholder demo)</p>
-          <p class="mt-4"><a href="#/" class="text-blue-700 underline">← Quay lại trang chủ</a></p>
-        </section>
-      `;
+            <p class="mt-6"><a href="#/" class="text-blue-700 underline">← Quay lại trang chủ</a></p>
+        </section>`;
     }
 
+    // --- Hiển thị trang Quiz (Nâng cấp) ---
+    async function showQuiz(id) {
+        if (!elView) return;
+        
+        // Reset
+        userScore = { part1: {}, part2: {}, part3: {} };
+        elView.innerHTML = `<div class="text-lg text-blue-700 italic">Đang tải đề ${id}...</div>`;
+        
+        try {
+            // 1. Tải dữ liệu JSON
+            const response = await fetch(`content/quizzes/${id}.json`);
+            if (!response.ok) throw new Error(`Không thể tải file: ${id}.json`);
+            currentQuizData = await response.json();
+            
+            const quiz = currentQuizData;
+            
+            // 2. Render khung
+            elView.innerHTML = `
+                <h2 class="text-3xl font-bold text-blue-800">${quiz.title}</h2>
+                <div id="quiz-part-1" class="mt-8"></div>
+                <div id="quiz-part-2" class="mt-8"></div>
+                <div id="quiz-part-3" class="mt-8"></div>
+            `;
+            
+            // 3. Render từng phần
+            renderPart1(quiz.parts.part1);
+            renderPart2(quiz.parts.part2);
+            renderPart3(quiz.parts.part3);
+            
+            // 4. Render công thức toán
+            renderMathInElement(elView, {
+                delimiters: [
+                    {left: "$$", right: "$$", display: true}, {left: "$", right: "$", display: false},
+                    {left: "\\(", right: "\\)", display: false}, {left: "\\[", right: "\\]", display: true}
+                ]
+            });
+            
+            // 5. Hiện thanh điểm
+            updateScoreDisplay(quiz.totalPoints || 34);
+
+        } catch (error) {
+            console.error(error);
+            elView.innerHTML = `<div class="p-6 bg-red-100 text-red-700 rounded-xl">Lỗi tải đề: ${error.message}</div>`;
+        }
+    }
+
+    // --- Các hàm render từng phần (Lấy từ file gốc) ---
+    function createQuestionCard(item, partHtml) {
+        return `
+            <div class="question-card">
+                <div class="font-medium text-lg text-gray-900">${item.question}</div>
+                ${partHtml}
+                <div class="mt-6">
+                    <button class="check-button" data-check-id="${item.id}" data-part="${partHtml.includes('name=') ? 'part1' : (partHtml.includes('sub-item-') ? 'part2' : 'part3')}">Kiểm tra</button>
+                    <div id="solution-${item.id}" class="solution-content hidden">
+                        ${item.solution}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderPart1(data) {
+        const container = document.getElementById('quiz-part-1');
+        if (!data || data.length === 0) return;
+        
+        container.innerHTML = `<h3 class="text-2xl font-semibold text-gray-700 border-b-2 border-gray-300 pb-2 mb-4">Phần 1: Nhiều lựa chọn</h3>`;
+        
+        data.forEach(item => {
+            const optionsHtml = `<div class="list-none space-y-2 mt-4" id="options-${item.id}">` + 
+                item.options.map((opt, index) => {
+                    const value = String.fromCharCode(65 + index); // A, B, C, D
+                    return `
+                    <label class="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-all cursor-pointer">
+                        <input type="radio" name="${item.id}" value="${value}" class="mr-3 text-blue-600 focus:ring-blue-500">
+                        <span class="text-gray-700">${value}. ${opt}</span>
+                    </label>
+                    `;
+                }).join('') + `</div>`;
+            container.innerHTML += createQuestionCard(item, optionsHtml);
+        });
+    }
+
+    function renderPart2(data) {
+        const container = document.getElementById('quiz-part-2');
+        if (!data || data.length === 0) return;
+
+        container.innerHTML = `<h3 class="text-2xl font-semibold text-gray-700 border-b-2 border-gray-300 pb-2 mb-4">Phần 2: Đúng/Sai</h3>`;
+        
+        data.forEach(item => {
+             const optionsHtml = `<div class="list-none space-y-4 mt-4" id="options-${item.id}">` + 
+                item.items.map(subItem => `
+                    <div class="p-3 rounded-lg border border-gray-200" id="sub-item-${item.id}-${subItem.id}">
+                        <p class="text-gray-700 mb-2">${subItem.id}) ${subItem.text}</p>
+                        <div class="flex space-x-4">
+                            <label class="flex items-center cursor-pointer">
+                                <input type="radio" name="${item.id}-${subItem.id}" value="true" class="mr-2 text-green-600 focus:ring-green-500">
+                                <span>Đúng</span>
+                            </label>
+                            <label class="flex items-center cursor-pointer">
+                                <input type="radio" name="${item.id}-${subItem.id}" value="false" class="mr-2 text-red-600 focus:ring-red-500">
+                                <span>Sai</span>
+                            </label>
+                        </div>
+                    </div>
+                `).join('') + `</div>`;
+            container.innerHTML += createQuestionCard(item, optionsHtml);
+        });
+    }
+
+    function renderPart3(data) {
+        const container = document.getElementById('quiz-part-3');
+        if (!data || data.length === 0) return;
+
+        container.innerHTML = `<h3 class="text-2xl font-semibold text-gray-700 border-b-2 border-gray-300 pb-2 mb-4">Phần 3: Bài toán</h3>`;
+        
+        data.forEach(item => {
+            const inputHtml = `
+            <div class="mt-4">
+                <input type="text" id="${item.id}-input" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Nhập câu trả lời của bạn...">
+            </div>`;
+            container.innerHTML += createQuestionCard(item, inputHtml);
+        });
+    }
+    
+    // --- Các hàm xử lý kiểm tra (Lấy từ file gốc) ---
+    function handlePart1Check(itemId, itemData, button) {
+        const selectedRadio = elView.querySelector(`input[name="${itemId}"]:checked`);
+        const selectedValue = selectedRadio ? selectedRadio.value : null;
+        const isCorrect = selectedValue === itemData.correctAnswer;
+        
+        userScore.part1[itemId] = { selected: selectedValue, correct: itemData.correctAnswer, isCorrect: isCorrect };
+
+        const optionsLabels = elView.querySelectorAll(`#options-${itemId} label`);
+        optionsLabels.forEach(label => {
+            const radio = label.querySelector('input');
+            label.classList.remove('correct-answer', 'incorrect-answer');
+            if (radio.value === itemData.correctAnswer) {
+                label.classList.add('correct-answer');
+            } else if (radio.value === selectedValue) {
+                label.classList.add('incorrect-answer');
+            }
+            radio.disabled = true;
+        });
+    }
+    function handlePart2Check(itemId, itemData, button) {
+        userScore.part2[itemId] = {};
+        itemData.items.forEach(subItem => {
+            const selectedRadio = elView.querySelector(`input[name="${itemId}-${subItem.id}"]:checked`);
+            const selectedValue = selectedRadio ? selectedRadio.value : null;
+            const isCorrect = String(selectedValue) === String(subItem.correct);
+
+            userScore.part2[itemId][subItem.id] = { selected: selectedValue, correct: subItem.correct, isCorrect: isCorrect };
+            
+            const subItemDiv = elView.querySelector(`#sub-item-${itemId}-${subItem.id}`);
+            subItemDiv.classList.remove('correct-answer', 'incorrect-answer');
+            if (isCorrect) {
+                subItemDiv.classList.add('correct-answer');
+            } else {
+                subItemDiv.classList.add('incorrect-answer');
+            }
+            subItemDiv.querySelectorAll('input[type="radio"]').forEach(radio => radio.disabled = true);
+        });
+    }
+    function handlePart3Check(itemId, itemData, button) {
+        const inputField = elView.querySelector(`#${itemId}-input`);
+        const inputValue = inputField.value.trim();
+        // Cho phép nhiều đáp án đúng (ví dụ "4/5" và "0.8")
+        const isCorrect = itemData.correctAnswer.map(ans => String(ans).toLowerCase()).includes(inputValue.toLowerCase());
+        
+        userScore.part3[itemId] = { input: inputValue, correct: itemData.correctAnswer, isCorrect: isCorrect };
+
+        inputField.classList.remove('correct-answer', 'incorrect-answer');
+        if (isCorrect) inputField.classList.add('correct-answer');
+        else inputField.classList.add('incorrect-answer');
+        inputField.disabled = true;
+    }
+    
+    // --- Event Listener cho nút "Kiểm tra" ---
+    elView.addEventListener('click', (e) => {
+        if (e.target.matches('.check-button:not(:disabled)')) {
+            const button = e.target;
+            const itemId = button.dataset.checkId;
+            const part = button.dataset.part;
+            
+            const partData = currentQuizData.parts[part];
+            if (!partData) return;
+            
+            const itemData = partData.find(item => item.id === itemId);
+            if (!itemData) return;
+
+            // Chạy hàm kiểm tra tương ứng
+            if (part === 'part1') handlePart1Check(itemId, itemData, button);
+            else if (part === 'part2') handlePart2Check(itemId, itemData, button);
+            else if (part === 'part3') handlePart3Check(itemId, itemData, button);
+            
+            // Hiện lời giải
+            const solutionContent = document.getElementById(`solution-${itemId}`);
+            if (solutionContent) solutionContent.classList.remove('hidden');
+            
+            button.disabled = true;
+            button.textContent = 'Đã kiểm tra';
+            
+            // Cập nhật tổng điểm
+            updateScoreDisplay(currentQuizData.totalPoints || 34);
+        }
+    });
+
+    // --- BỘ ĐỊNH TUYẾN (ROUTER) ---
     function route(){
       const h = location.hash || '#/'
-      if (h.startsWith('#/quiz/')) {
-        const id = h.replace('#/quiz/','').trim();
-        return showQuiz(id);
+      
+      // === ĐÃ CẬP NHẬT ===
+      if (h.startsWith('#/quiz/de-cuoi-chuong-III')) {
+        return showQuiz('de-cuoi-chuong-III');
+      }
+      // ===================
+      
+      if (h.startsWith('#/quiz/sequences-01')) { // Giữ lại đề cũ nếu cần
+        return showQuiz('sequences-01');
       }
       if (h.startsWith('#/grade/')) {
         const g = h.replace('#/grade/','').trim();
@@ -263,9 +534,8 @@
     }
 
     window.addEventListener('hashchange', route);
-    // chạy lần đầu
-    route();
+    route(); // Chạy lần đầu
   </script>
-
 </body>
 </html>
+
