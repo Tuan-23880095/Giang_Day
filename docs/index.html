@@ -198,16 +198,44 @@
       `;
     }
 
-    function showGrade(grade){
-      if(!elView) return;
-      elView.innerHTML = `
-        <section class="bg-white p-6 rounded-xl shadow border">
-          <h2 class="text-2xl font-bold mb-2">Khối ${grade}</h2>
-          <p class="text-gray-600">Trang nội dung khối ${grade} (đang chuẩn bị). Bạn có thể thêm card/bài tại đây.</p>
-          <p class="mt-4"><a href="#/" class="text-blue-700 underline">← Quay lại trang chủ</a></p>
-        </section>
-      `;
-    }
+// Ví dụ minh hoạ cách mở rộng hàm showGrade() cho route #/grade/:id
+// Hàm này có thể thay vào file index-fixed.html hiện tại
+  
+  function showGrade(grade) {
+    elView.innerHTML = `
+      <section class="mb-8">
+        <h2 class="section-title text-2xl font-bold mb-2">
+          <i class="fas fa-school mr-3 text-blue-700"></i>
+          Tài nguyên cho khối ${grade}
+        </h2>
+        <p class="text-gray-600 mb-4">(Bạn có thể liệt kê các chủ đề hoặc đề minh hoạ cho khối này.)</p>
+  
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <a href="#/quiz/sequences-01" class="block bg-white p-6 rounded-xl shadow hover:shadow-xl transition">
+            <div class="flex items-center gap-3">
+              <i class="fas fa-file-alt text-2xl text-blue-700"></i>
+              <div>
+                <h3 class="text-xl font-semibold text-gray-800">Đề minh hoạ: Dãy số & Cấp số</h3>
+                <p class="text-gray-600">Ôn tập dãy số, cấp số cộng, cấp số nhân.</p>
+              </div>
+            </div>
+          </a>
+  
+          <a href="#/subject/geometry" class="block bg-white p-6 rounded-xl shadow hover:shadow-xl transition">
+            <div class="flex items-center gap-3">
+              <i class="fas fa-drafting-compass text-2xl text-blue-700"></i>
+              <div>
+                <h3 class="text-xl font-semibold text-gray-800">Chủ đề: Hình học không gian</h3>
+                <p class="text-gray-600">Ôn tập khối chóp, lăng trụ, góc giữa đường và mặt.</p>
+              </div>
+            </div>
+          </a>
+        </div>
+  
+        <p class="mt-6"><a href="#/" class="text-blue-700 underline">← Quay lại trang chủ</a></p>
+      </section>`;
+  }
+
 
     function showQuiz(id){
       if(!elView) return;
