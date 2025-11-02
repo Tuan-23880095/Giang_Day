@@ -28,10 +28,10 @@
 
   <main id="app-root" class="container mx-auto p-4 md:p-8">
     <my-info-card class="mb-10"></my-info-card>
-    <content-category data-category-id="grades" data-title="Các khối lớp" data-icon-class="fas fa-graduation-cap"></content-category>
-    <content-category data-category-id="math" data-title="Chủ đề Toán học" data-icon-class="fas fa-calculator"></content-category>
-    <content-category data-category-id="science" data-title="Chủ đề Khoa học Tự nhiên" data-icon-class="fas fa-flask"></content-category>
-    <content-category data-category-id="other" data-title="Hoạt động khác" data-icon-class="fas fa-palette"></content-category>
+    <content-category data-category-id="grades" data-title="Các khối lớp" data-icon-class="fas fa-graduation-cap"><./content-category>
+    <content-category data-category-id="math" data-title="Chủ đề Toán học" data-icon-class="fas fa-calculator"><./content-category>
+    <content-category data-category-id="science" data-title="Chủ đề Khoa học Tự nhiên" data-icon-class="fas fa-flask"><./content-category>
+    <content-category data-category-id="other" data-title="Hoạt động khác" data-icon-class="fas fa-palette"><./content-category>
   </main>
 
   <contact-footer></contact-footer>
@@ -108,7 +108,7 @@
           : `
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               ${(this.state.items||[]).map(it=>`
-                <content-item-card data-title="${it.title}" data-description="${it.description}" data-icon="${it.icon}" data-url="${it.url}"></content-item-card>
+                <content-item-card data-title="${it.title}" data-description="${it.description}" data-icon="${it.icon}" data-url="${it.url}"><./content-item-card>
               `).join('')}
             </div>`;
         this.innerHTML = `
